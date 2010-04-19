@@ -93,7 +93,7 @@ bool Main::confirmApply() {
 
 void Main::RefreshList(int dllID) {
 	activeDll = dllID;
-	lstScroll->Value = 1;
+	lstScroll->Value = 0;
 	RefreshList(0, 0);
 }
 
@@ -107,6 +107,7 @@ void Main::RefreshList(int start, int overwrite) {
 		for each(ListViewItem^ i in lstDLLExplorer->SelectedItems) {
 			selected->Add(i->Text);
 		}
+
 		lstDLLExplorer->BeginUpdate();
 		if(overwrite == 0) lstDLLExplorer->Items->Clear();
 		DLLInterface^ dllFile = dlls[activeDll];
@@ -136,7 +137,7 @@ void Main::RefreshList(int start, int overwrite) {
 				}
 				break;
 			case DLLEntry::None:
-				if(!chkDLLExplorerShowEmpty->Checked) {
+				if(!chkDLLExplorerShowEmpty->Checked && a + dllFile->ID * 0x10000 != currentEntry) {
 					i = nullptr;
 					pass++;
 				} else
@@ -161,6 +162,7 @@ void Main::RefreshList(int start, int overwrite) {
 					i->Selected = true;
 			}
 		}
+		if(currentEntry >= 0) lstDLLExplorer->Items[currentEntry - dllFile->ID * 0x10000 - start]->Selected = true;
 		this->lstDLLExplorer->ResumeLayout();
 	} else {
 		lstDLLExplorer->Items->Clear();
