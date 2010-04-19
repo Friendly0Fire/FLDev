@@ -525,6 +525,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->lstDLLExplorer->FullRowSelect = true;
 			this->lstDLLExplorer->GridLines = true;
 			this->lstDLLExplorer->HeaderStyle = System::Windows::Forms::ColumnHeaderStyle::Nonclickable;
+			this->lstDLLExplorer->HideSelection = false;
 			this->lstDLLExplorer->LabelWrap = false;
 			this->lstDLLExplorer->Location = System::Drawing::Point(3, 37);
 			this->lstDLLExplorer->MultiSelect = false;
@@ -1040,10 +1041,10 @@ private: System::Void txtLocalIDS_TextChanged(System::Object^  sender, System::E
 private: System::Void txtEntry_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 			 if(changingSelectedIDS) return;
 
-			 if(dlls->mGetEntryType(currentEntry) != DLLEntry::None) {
-				undoTimer->Enabled = true;
-				undoTimer->Start();
-			 }
+			 undoTimer->Stop();
+			 undoTimer->Enabled = false;
+			 undoTimer->Enabled = true;
+			 undoTimer->Start();
 		 }
 private: System::Void undoTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
 			 addUndo();
