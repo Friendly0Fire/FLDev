@@ -28,7 +28,7 @@ namespace DLLEditor {
 		{
 			InitializeComponent();
 
-			progressStatusTexts = gcnew List<String^>();
+			progressStatusTexts = gcnew List<ProcessBarItem^>();
 			this->backgroundWorkerFLINI->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Main::backgroundWorkerFLINI_RunWorkerCompleted);
 			this->backgroundWorkerApply->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Main::backgroundWorkerApply_RunWorkerCompleted);
 			this->lstDLLExplorer->MouseWheel += gcnew MouseEventHandler(this, &Main::lstDLLExplorer_MouseWheel);
@@ -131,6 +131,7 @@ private: System::Windows::Forms::TextBox^  txtLocalIDS;
 private: System::Windows::Forms::Timer^  undoTimer;
 private: System::Windows::Forms::ToolStripButton^  entryUndo;
 private: System::Windows::Forms::ToolStripButton^  entryRedo;
+private: System::Windows::Forms::Timer^  statusBarTimer;
 private: System::ComponentModel::IContainer^  components;
 
 
@@ -209,6 +210,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->mainProgressBar = (gcnew System::Windows::Forms::ToolStripProgressBar());
 			this->mainStatusText = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->undoTimer = (gcnew System::Windows::Forms::Timer(this->components));
+			this->statusBarTimer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->mainTab->SuspendLayout();
 			this->tabSettings->SuspendLayout();
 			this->grpOut->SuspendLayout();
@@ -709,6 +711,7 @@ private: System::ComponentModel::IContainer^  components;
 			// entryUndo
 			// 
 			this->entryUndo->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->entryUndo->Enabled = false;
 			this->entryUndo->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"entryUndo.Image")));
 			this->entryUndo->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->entryUndo->Name = L"entryUndo";
@@ -719,6 +722,7 @@ private: System::ComponentModel::IContainer^  components;
 			// entryRedo
 			// 
 			this->entryRedo->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->entryRedo->Enabled = false;
 			this->entryRedo->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"entryRedo.Image")));
 			this->entryRedo->ImageTransparentColor = System::Drawing::Color::Magenta;
 			this->entryRedo->Name = L"entryRedo";
@@ -807,6 +811,12 @@ private: System::ComponentModel::IContainer^  components;
 			this->undoTimer->Interval = 2000;
 			this->undoTimer->Tick += gcnew System::EventHandler(this, &Main::undoTimer_Tick);
 			// 
+			// statusBarTimer
+			// 
+			this->statusBarTimer->Enabled = true;
+			this->statusBarTimer->Interval = 1000;
+			this->statusBarTimer->Tick += gcnew System::EventHandler(this, &Main::statusBarTimer_Tick);
+			// 
 			// Main
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -858,7 +868,7 @@ private:
 	array<String^>^ dllNames;
 	Interfaces::DLLManager^ dlls;
 	String^ flINIPath;
-	List<String^>^ progressStatusTexts;
+	List<ProcessBarItem^>^ progressStatusTexts;
 	bool changingSelectedIDS;
 
 private: System::Void btnReloadINI_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -901,7 +911,7 @@ private: System::Void btnOutOpen_Click(System::Object^  sender, System::EventArg
 		 }
 private: System::Void btnApply_Click(System::Object^  sender, System::EventArgs^  e) {
 			 if(dlls != nullptr && confirmApply()) {
-				 addStatusText("Applying changes");
+				 addStatusText("Applying changes", -1, true);
 				 backgroundWorkerApply->RunWorkerAsync();
 				 this->Cursor = Cursors::WaitCursor;
 			 }
@@ -923,23 +933,23 @@ private: System::Void backgroundWorkerApply_RunWorkerCompleted(System::Object^  
 			 removeStatusText("Applying changes");
 		 }
 
-		 // TODO: Overhaul status texts with built-in timer (use object with tick count and text)
-		 void addStatusText(String^ text) {
-			 progressStatusTexts->Add(text);
-			 updateStatusText();
+		 void addStatusText(String^ text, int ticks, bool progress) {
+			 addStatusText(text, ticks, progress, true);
 		 }
-		 void addStatusText(String^ text, bool duplicate) {
-			 for each(String^ t in progressStatusTexts) {
-				 if(text->Equals(t))
-					 return;
+		 void addStatusText(String^ text, int ticks, bool progress, bool duplicate) {
+			 if(duplicate) {
+				 for each(ProcessBarItem^ t in progressStatusTexts) {
+					 if(text->Equals(t))
+						 return updateStatusText();
+				 }
 			 }
-			 progressStatusTexts->Add(text);
+			 progressStatusTexts->Add(gcnew ProcessBarItem(text, ticks, progress));
 			 updateStatusText();
 		 }
 
 		 void removeStatusText(String^ text) {
-			 for each(String^ t in progressStatusTexts) {
-				 if(text->Equals(t)) {
+			 for each(ProcessBarItem^ t in progressStatusTexts) {
+				 if(t->Equals(text)) {
 					 progressStatusTexts->Remove(t);
 					 break;
 				 }
@@ -947,24 +957,33 @@ private: System::Void backgroundWorkerApply_RunWorkerCompleted(System::Object^  
 			 updateStatusText();
 		 }
 
-		 void updateStatusText(bool progress) {
-			 mainStatusText->Text = "";
-			 if(progressStatusTexts->Count > 0) {
-				 if(progress) {
+		 void updateStatusText() {
+			 bool progress = false;
+			 for each(ProcessBarItem^ t in progressStatusTexts) {
+				 if(t->Progress) {
+					 progress = true;
+					 break;
+				 }
+			 }
+
+			 if(progress) {
+				 if(mainProgressBar->Style != ProgressBarStyle::Marquee) {
 					 mainProgressBar->Style = ProgressBarStyle::Marquee;
 					 mainProgressBar->MarqueeAnimationSpeed = 20;
 				 }
-				 for each(String^ t in progressStatusTexts)
+			 } else {
+				 mainProgressBar->MarqueeAnimationSpeed = 0;
+				 mainProgressBar->Style = ProgressBarStyle::Blocks;
+			 }
+
+			 mainStatusText->Text = "";
+			 if(progressStatusTexts->Count > 0) {
+				 for each(ProcessBarItem^ t in progressStatusTexts)
 					mainStatusText->Text += t + ", ";
 				 mainStatusText->Text = mainStatusText->Text->Remove(mainStatusText->Text->Length-2);
 				 mainStatusText->Text += "...";
-			 } else {
-				 if(progress) {
-					 mainProgressBar->MarqueeAnimationSpeed = 0;
-					 mainProgressBar->Style = ProgressBarStyle::Blocks;
-				 }
+			 } else
 				 mainStatusText->Text = "Ready";
-			 }
 		 }
 
 		void RefreshList(int dllID);
@@ -1059,6 +1078,15 @@ private: System::Void entryRedo_Click(System::Object^  sender, System::EventArgs
 
 			 if(!i->canRedo()) entryRedo->Enabled = false;
 		 }
+private: System::Void statusBarTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
+			 updateStatusText();
+			 List<ProcessBarItem^>^ remove = gcnew List<ProcessBarItem^>();
+			 for each(ProcessBarItem^ t in progressStatusTexts) {
+				 t->Decrement();
+				 if(t->TimeLeft == 0) remove->Add(t);
+			 }
+			 for each(ProcessBarItem^ t in remove)
+				 progressStatusTexts->Remove(t);
+		 }
 };
 }
-

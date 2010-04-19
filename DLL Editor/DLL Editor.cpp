@@ -43,7 +43,7 @@ void Main::loadINI() {
 
 		flINIPath = txtINIPath->Text;
 		Directory::SetCurrentDirectory(Path::GetDirectoryName(flINIPath));
-		addStatusText("Reading INI");
+		addStatusText("Reading INI", -1, true);
 		backgroundWorkerFLINI->RunWorkerAsync();
 		this->Cursor = Cursors::WaitCursor;
 	}
@@ -248,10 +248,10 @@ void Main::addUndo() {
 	undoTimer->Stop();
 	undoTimer->Enabled = false;
 
-	addStatusText("Saved changes to entry", false);
-	updateStatusText(false);
 	int ids;
 	if(!Int32::TryParse(comboIDS->Text, ids)) return;
+
+	addStatusText("Saved changes to entry " + comboIDS->Text, 3, false, false);
 
 	String^ t = txtEntry->Text;
 	if(radioSInfocard->Checked) t = SimpleInfocards::SimpleToXML(t);

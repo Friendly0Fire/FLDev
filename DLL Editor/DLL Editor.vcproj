@@ -208,6 +208,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Misc.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -242,6 +246,10 @@
 					SubType="Designer"
 					>
 				</File>
+			</File>
+			<File
+				RelativePath=".\Misc.h"
+				>
 			</File>
 			<File
 				RelativePath=".\resource.h"
