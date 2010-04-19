@@ -118,14 +118,14 @@ namespace Interfaces
 
 			property IDSItem^ Obj[int, bool] {
 				IDSItem^ get(int id, bool infocard) {
-					if(infocard) return names[Localize(id, false)];
+					if(!infocard) return names[Localize(id, false)];
 					else return infocards[Localize(id, false)];
 				}
 			}
 
 			property IDSItem^ ObjL[int, bool] {
 				IDSItem^ get(int id, bool infocard) {
-					if(infocard) return names[id];
+					if(!infocard) return names[id];
 					else return infocards[id];
 				}
 			}

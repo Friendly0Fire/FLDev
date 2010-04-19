@@ -195,6 +195,8 @@ void Main::lstDLLExplorer_ItemActivate(System::Object^  sender, System::EventArg
 }
 
 void Main::showNewEntry(int id) {
+	if(changingSelectedIDS) return;
+
 	changingSelectedIDS = true;
 
 	addUndo();
@@ -215,7 +217,25 @@ void Main::showNewEntry(int id) {
 	comboIDS->Text = "" + id;
 	txtLocalIDS->Text = "" + dlls->localize(id);
 	lblIDSInfo->Text = "DLL " + dlls->getDllId(id) + " of " + dlls->getDLLCount() + ".";
+
+	currentEntry = id;
+
+	IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
+	entryRedo->Enabled = i->canRedo() > 0 ? true : false;
+	entryUndo->Enabled = i->canUndo() > 0 ? true : false;
 	changingSelectedIDS = false;
+}
+
+void Main::refreshEntry() {
+	if(currentEntry < 0) return;
+
+	String^ e = dlls->mGetEntry(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
+	if(radioSInfocard->Checked) e = SimpleInfocards::XMLToSimple(e);
+	txtEntry->Text = e;
+
+	IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
+	entryRedo->Enabled = i->canRedo() > 0 ? true : false;
+	entryUndo->Enabled = i->canUndo() > 0 ? true : false;
 }
 
 // TODO: Force changing when selected by user
@@ -245,19 +265,22 @@ void Main::radioType(DLLEntry type) {
 }
 
 void Main::addUndo() {
-	undoTimer->Stop();
-	undoTimer->Enabled = false;
-
-	int ids;
-	if(!Int32::TryParse(comboIDS->Text, ids)) return;
-
-	addStatusText("Saved changes to entry " + comboIDS->Text, 3, false, false);
+	if(currentEntry < 0) return;
 
 	String^ t = txtEntry->Text;
 	if(radioSInfocard->Checked) t = SimpleInfocards::SimpleToXML(t);
 
-	dlls->mSetEntry(ids, t, radioInfocard->Checked || radioSInfocard->Checked);
+	if(dlls->mGetEntry(currentEntry, radioInfocard->Checked || radioSInfocard->Checked) == t) return;
+
+	undoTimer->Stop();
+	undoTimer->Enabled = false;
+
+	addStatusText("Saved changes to entry " + currentEntry, 3, false, true);
+
+	dlls->mSetEntry(currentEntry, t, radioInfocard->Checked || radioSInfocard->Checked);
 
 	entryUndo->Enabled = true;
 	entryRedo->Enabled = false;
+
+	RefreshList(lstScroll->Value, 0);
 }

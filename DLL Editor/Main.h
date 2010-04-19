@@ -37,6 +37,7 @@ namespace DLLEditor {
 			RefreshList(lstScroll->Value, 0);
 			oldScroll = 0;
 			changingSelectedIDS = false;
+			currentEntry = -1;
 		}
 
 	protected:
@@ -633,6 +634,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->radioSInfocard->Text = L"Simple Infocard";
 			this->radioSInfocard->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
 			this->radioSInfocard->UseVisualStyleBackColor = true;
+			this->radioSInfocard->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Main::radioSInfocard_MouseClick);
 			this->radioSInfocard->CheckedChanged += gcnew System::EventHandler(this, &Main::radioSInfocard_CheckedChanged);
 			// 
 			// comboIDS
@@ -648,6 +650,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->comboIDS->Size = System::Drawing::Size(268, 26);
 			this->comboIDS->TabIndex = 4;
 			this->comboIDS->SelectedIndexChanged += gcnew System::EventHandler(this, &Main::comboIDS_SelectedIndexChanged);
+			this->comboIDS->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Main::comboIDS_KeyUp);
 			this->comboIDS->TextUpdate += gcnew System::EventHandler(this, &Main::comboIDS_TextUpdate);
 			// 
 			// radioName
@@ -662,6 +665,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->radioName->TabStop = true;
 			this->radioName->Text = L"Name";
 			this->radioName->UseVisualStyleBackColor = true;
+			this->radioName->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Main::radioName_MouseClick);
 			this->radioName->CheckedChanged += gcnew System::EventHandler(this, &Main::radioName_CheckedChanged);
 			// 
 			// radioInfocard
@@ -678,6 +682,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->radioInfocard->Text = L"Infocard";
 			this->radioInfocard->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
 			this->radioInfocard->UseVisualStyleBackColor = true;
+			this->radioInfocard->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Main::radioInfocard_MouseClick);
 			this->radioInfocard->CheckedChanged += gcnew System::EventHandler(this, &Main::radioInfocard_CheckedChanged);
 			// 
 			// txtEntry
@@ -759,6 +764,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->txtLocalIDS->Size = System::Drawing::Size(147, 20);
 			this->txtLocalIDS->TabIndex = 10;
 			this->txtLocalIDS->TextChanged += gcnew System::EventHandler(this, &Main::txtLocalIDS_TextChanged);
+			this->txtLocalIDS->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Main::txtLocalIDS_KeyUp);
 			// 
 			// openFLINI
 			// 
@@ -870,6 +876,7 @@ private:
 	String^ flINIPath;
 	List<ProcessBarItem^>^ progressStatusTexts;
 	bool changingSelectedIDS;
+	int currentEntry;
 
 private: System::Void btnReloadINI_Click(System::Object^  sender, System::EventArgs^  e) {
 			 if(dataLossAsk())
@@ -989,6 +996,7 @@ private: System::Void backgroundWorkerApply_RunWorkerCompleted(System::Object^  
 		void RefreshList(int dllID);
 		void RefreshList(int start, int overwrite);
 		void showNewEntry(int id);
+		void refreshEntry();
 		void radioType(DLLEntry type);
 		void addUndo();
 
@@ -1015,68 +1023,54 @@ private: System::Void comboIDS_SelectedIndexChanged(System::Object^  sender, Sys
 				showNewEntry(ids);
 		 }
 private: System::Void comboIDS_TextUpdate(System::Object^  sender, System::EventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 int ids;
-			 if(Int32::TryParse(comboIDS->Text, ids))
-				showNewEntry(ids);
+			 
 		 }
 private: System::Void radioName_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 int ids;
-			 if(Int32::TryParse(comboIDS->Text, ids))
-				showNewEntry(ids);
+			 
 		 }
 private: System::Void radioInfocard_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 int ids;
-			 if(Int32::TryParse(comboIDS->Text, ids))
-				showNewEntry(ids);
+			 
 		 }
 private: System::Void radioSInfocard_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 int ids;
-			 if(Int32::TryParse(comboIDS->Text, ids))
-				showNewEntry(ids);
+			 
 		 }
 private: System::Void txtLocalIDS_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 int ids;
-			 if(Int32::TryParse(txtLocalIDS->Text, ids))
-				showNewEntry(comboDLLExplorer->SelectedIndex * 0x10000 + ids);
+			 
 		 }
 private: System::Void txtEntry_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 int ids;
-			 if(Int32::TryParse(txtLocalIDS->Text, ids))
-				 if(dlls->mIsModified(ids, radioInfocard->Checked || radioSInfocard->Checked)) {
-					 undoTimer->Enabled = true;
-					undoTimer->Start();
-				 } else
-					addUndo();
+			 if(changingSelectedIDS) return;
+
+			 if(dlls->mGetEntryType(currentEntry) != DLLEntry::None) {
+				undoTimer->Enabled = true;
+				undoTimer->Start();
+			 }
 		 }
 private: System::Void undoTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
 			 addUndo();
 		 }
 private: System::Void entryUndo_Click(System::Object^  sender, System::EventArgs^  e) {
-			 int ids;
-			 if(!Int32::TryParse(comboIDS->Text, ids)) return;
-			 IDSItem^ i = dlls->mGetEntryObj(ids, radioInfocard->Checked || radioSInfocard->Checked);
+			 IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
 			 if(i->canUndo())
 				i->Undo();
 
-			 showNewEntry(ids);
+			 refreshEntry();
 
 			 if(!i->canUndo()) entryUndo->Enabled = false;
+			 entryRedo->Enabled = true;
+
+			 RefreshList(lstScroll->Value, 0);
 		 }
 private: System::Void entryRedo_Click(System::Object^  sender, System::EventArgs^  e) {
-			 int ids;
-			 if(!Int32::TryParse(comboIDS->Text, ids)) return;
-			 IDSItem^ i = dlls->mGetEntryObj(ids, radioInfocard->Checked || radioSInfocard->Checked);
+			 IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
 			 if(i->canRedo())
 				i->Redo();
 
-			 showNewEntry(ids);
+			 refreshEntry();
 
 			 if(!i->canRedo()) entryRedo->Enabled = false;
+			 entryUndo->Enabled = true;
+
+			 RefreshList(lstScroll->Value, 0);
 		 }
 private: System::Void statusBarTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
 			 updateStatusText();
@@ -1087,6 +1081,30 @@ private: System::Void statusBarTimer_Tick(System::Object^  sender, System::Event
 			 }
 			 for each(ProcessBarItem^ t in remove)
 				 progressStatusTexts->Remove(t);
+		 }
+private: System::Void comboIDS_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+			 if(changingSelectedIDS) return;
+			 int ids;
+			 if(Int32::TryParse(comboIDS->Text, ids) && ids != currentEntry)
+				showNewEntry(ids);
+		 }
+private: System::Void txtLocalIDS_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+			 if(changingSelectedIDS) return;
+			 int ids;
+			 if(Int32::TryParse(txtLocalIDS->Text, ids) && ids != currentEntry)
+				showNewEntry(comboDLLExplorer->SelectedIndex * 0x10000 + ids);
+		 }
+private: System::Void radioInfocard_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+			 if(changingSelectedIDS) return;
+			 refreshEntry();
+		 }
+private: System::Void radioSInfocard_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+			 if(changingSelectedIDS) return;
+			 refreshEntry();
+		 }
+private: System::Void radioName_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+			 if(changingSelectedIDS) return;
+			 refreshEntry();
 		 }
 };
 }
