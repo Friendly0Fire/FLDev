@@ -44,7 +44,7 @@ void Main::loadINI() {
 
 		flINIPath = txtINIPath->Text;
 		Directory::SetCurrentDirectory(Path::GetDirectoryName(flINIPath));
-		addStatusText("Reading INI", -1, true);
+		mainStatus->addStatusText("Reading INI", -1, true);
 		backgroundWorkerFLINI->RunWorkerAsync();
 		this->Cursor = Cursors::WaitCursor;
 	}
@@ -278,7 +278,7 @@ void Main::addUndo() {
 	undoTimer->Stop();
 	undoTimer->Enabled = false;
 
-	addStatusText("Saved changes to entry " + currentEntry, 3, false, true);
+	mainStatus->addStatusText("Saved changes to entry " + currentEntry, 3, false, true);
 
 	dlls->mSetEntry(currentEntry, t, radioInfocard->Checked || radioSInfocard->Checked);
 

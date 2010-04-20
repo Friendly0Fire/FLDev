@@ -27,6 +27,7 @@ namespace DLLEditor {
 	public:
 		Main(void)
 		{
+			mainStatus = gcnew CompositeStatusBar();
 			InitializeComponent();
 
 			progressStatusTexts = gcnew List<ProcessBarItem^>();
@@ -97,7 +98,6 @@ namespace DLLEditor {
 	private: System::Windows::Forms::OpenFileDialog^  openDLL;
 	private: System::ComponentModel::BackgroundWorker^  backgroundWorkerFLINI;
 	private: System::ComponentModel::BackgroundWorker^  backgroundWorkerApply;
-	private: System::Windows::Forms::StatusStrip^  mainStatusStrip;
 
 	private:
 		int										oldScroll,
@@ -131,11 +131,10 @@ private: System::Windows::Forms::TextBox^  txtLocalIDS;
 private: System::Windows::Forms::Timer^  undoTimer;
 private: System::Windows::Forms::ToolStripButton^  entryUndo;
 private: System::Windows::Forms::ToolStripButton^  entryRedo;
-private: System::Windows::Forms::Timer^  statusBarTimer;
 private: System::ComponentModel::IContainer^  components;
 
 
-
+private: CompositeStatusBar^ mainStatus;
 
 
 
@@ -206,11 +205,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->openDLL = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->backgroundWorkerFLINI = (gcnew System::ComponentModel::BackgroundWorker());
 			this->backgroundWorkerApply = (gcnew System::ComponentModel::BackgroundWorker());
-			this->mainStatusStrip = (gcnew System::Windows::Forms::StatusStrip());
-			this->mainProgressBar = (gcnew System::Windows::Forms::ToolStripProgressBar());
-			this->mainStatusText = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->undoTimer = (gcnew System::Windows::Forms::Timer(this->components));
-			this->statusBarTimer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->mainTab->SuspendLayout();
 			this->tabSettings->SuspendLayout();
 			this->grpOut->SuspendLayout();
@@ -223,7 +218,6 @@ private: System::ComponentModel::IContainer^  components;
 			this->grpDLLExplorer->SuspendLayout();
 			this->tableLayoutPanel1->SuspendLayout();
 			this->toolsEntry->SuspendLayout();
-			this->mainStatusStrip->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// mainTab
@@ -787,41 +781,10 @@ private: System::ComponentModel::IContainer^  components;
 			this->backgroundWorkerApply->DoWork += gcnew System::ComponentModel::DoWorkEventHandler(this, &Main::backgroundWorkerApply_DoWork);
 			this->backgroundWorkerApply->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Main::backgroundWorkerGeneric_RunWorkerCompleted);
 			// 
-			// mainStatusStrip
-			// 
-			this->mainStatusStrip->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->mainProgressBar, 
-				this->mainStatusText});
-			this->mainStatusStrip->Location = System::Drawing::Point(0, 540);
-			this->mainStatusStrip->Name = L"mainStatusStrip";
-			this->mainStatusStrip->Size = System::Drawing::Size(784, 22);
-			this->mainStatusStrip->TabIndex = 7;
-			this->mainStatusStrip->Text = L"statusStrip1";
-			// 
-			// mainProgressBar
-			// 
-			this->mainProgressBar->MarqueeAnimationSpeed = 0;
-			this->mainProgressBar->Name = L"mainProgressBar";
-			this->mainProgressBar->Size = System::Drawing::Size(200, 16);
-			this->mainProgressBar->Style = System::Windows::Forms::ProgressBarStyle::Marquee;
-			// 
-			// mainStatusText
-			// 
-			this->mainStatusText->Name = L"mainStatusText";
-			this->mainStatusText->Size = System::Drawing::Size(567, 17);
-			this->mainStatusText->Spring = true;
-			this->mainStatusText->Text = L"Ready";
-			this->mainStatusText->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
-			// 
 			// undoTimer
 			// 
 			this->undoTimer->Interval = 2000;
 			this->undoTimer->Tick += gcnew System::EventHandler(this, &Main::undoTimer_Tick);
-			// 
-			// statusBarTimer
-			// 
-			this->statusBarTimer->Enabled = true;
-			this->statusBarTimer->Interval = 1000;
-			this->statusBarTimer->Tick += gcnew System::EventHandler(this, &Main::statusBarTimer_Tick);
 			// 
 			// Main
 			// 
@@ -829,7 +792,7 @@ private: System::ComponentModel::IContainer^  components;
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(784, 562);
 			this->Controls->Add(this->mainTab);
-			this->Controls->Add(this->mainStatusStrip);
+			this->Controls->Add(this->mainStatus);
 			this->HelpButton = true;
 			this->Name = L"Main";
 			this->Text = L"Freelancer Developer - DLL Editor";
@@ -854,8 +817,6 @@ private: System::ComponentModel::IContainer^  components;
 			this->tableLayoutPanel1->PerformLayout();
 			this->toolsEntry->ResumeLayout(false);
 			this->toolsEntry->PerformLayout();
-			this->mainStatusStrip->ResumeLayout(false);
-			this->mainStatusStrip->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -918,7 +879,7 @@ private: System::Void btnOutOpen_Click(System::Object^  sender, System::EventArg
 		 }
 private: System::Void btnApply_Click(System::Object^  sender, System::EventArgs^  e) {
 			 if(dlls != nullptr && confirmApply()) {
-				 addStatusText("Applying changes", -1, true);
+				 mainStatus->addStatusText("Applying changes", -1, true);
 				 backgroundWorkerApply->RunWorkerAsync();
 				 this->Cursor = Cursors::WaitCursor;
 			 }
@@ -933,64 +894,11 @@ private: System::Void backgroundWorkerGeneric_RunWorkerCompleted(System::Object^
 			 this->Cursor = Cursors::Default;
 		 }
 private: System::Void backgroundWorkerFLINI_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
-			 removeStatusText("Reading INI");
+			 mainStatus->removeStatusText("Reading INI");
 			 updateDLLList();
 		 }
 private: System::Void backgroundWorkerApply_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
-			 removeStatusText("Applying changes");
-		 }
-
-		 void addStatusText(String^ text, int ticks, bool progress) {
-			 addStatusText(text, ticks, progress, true);
-		 }
-		 void addStatusText(String^ text, int ticks, bool progress, bool duplicate) {
-			 if(duplicate) {
-				 for each(ProcessBarItem^ t in progressStatusTexts) {
-					 if(text->Equals(t))
-						 return updateStatusText();
-				 }
-			 }
-			 progressStatusTexts->Add(gcnew ProcessBarItem(text, ticks, progress));
-			 updateStatusText();
-		 }
-
-		 void removeStatusText(String^ text) {
-			 for each(ProcessBarItem^ t in progressStatusTexts) {
-				 if(t->Equals(text)) {
-					 progressStatusTexts->Remove(t);
-					 break;
-				 }
-			 }
-			 updateStatusText();
-		 }
-
-		 void updateStatusText() {
-			 bool progress = false;
-			 for each(ProcessBarItem^ t in progressStatusTexts) {
-				 if(t->Progress) {
-					 progress = true;
-					 break;
-				 }
-			 }
-
-			 if(progress) {
-				 if(mainProgressBar->Style != ProgressBarStyle::Marquee) {
-					 mainProgressBar->Style = ProgressBarStyle::Marquee;
-					 mainProgressBar->MarqueeAnimationSpeed = 20;
-				 }
-			 } else {
-				 mainProgressBar->MarqueeAnimationSpeed = 0;
-				 mainProgressBar->Style = ProgressBarStyle::Blocks;
-			 }
-
-			 mainStatusText->Text = "";
-			 if(progressStatusTexts->Count > 0) {
-				 for each(ProcessBarItem^ t in progressStatusTexts)
-					mainStatusText->Text += t + ", ";
-				 mainStatusText->Text = mainStatusText->Text->Remove(mainStatusText->Text->Length-2);
-				 mainStatusText->Text += "...";
-			 } else
-				 mainStatusText->Text = "Ready";
+			 mainStatus->removeStatusText("Applying changes");
 		 }
 
 		void RefreshList(int dllID);
@@ -1071,16 +979,6 @@ private: System::Void entryRedo_Click(System::Object^  sender, System::EventArgs
 			 entryUndo->Enabled = true;
 
 			 RefreshList(lstScroll->Value, 0);
-		 }
-private: System::Void statusBarTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
-			 updateStatusText();
-			 List<ProcessBarItem^>^ remove = gcnew List<ProcessBarItem^>();
-			 for each(ProcessBarItem^ t in progressStatusTexts) {
-				 t->Decrement();
-				 if(t->TimeLeft == 0) remove->Add(t);
-			 }
-			 for each(ProcessBarItem^ t in remove)
-				 progressStatusTexts->Remove(t);
 		 }
 private: System::Void comboIDS_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 			 if(changingSelectedIDS) return;
