@@ -1,6 +1,10 @@
 #pragma once
 
 using namespace System;
+using namespace System::Text::RegularExpressions;
+using namespace System::Collections;
+using namespace System::Windows::Forms;
+
 
 namespace Utilities {
 	public ref class ProcessBarItem {
@@ -29,5 +33,110 @@ namespace Utilities {
 			int timeleft;
 			bool progress;
 			String^ txt;
+	};
+
+	public enum class ErrorType {
+		Unknown = -1,
+		Notice = 0,
+		Warning = 1,
+		Error = 2
+	};
+
+	public ref class Error {
+	private:
+		ErrorType type;
+		String^ msg;
+		static Regex^ messageMatch = gcnew Regex("^.+ : (?<type>(WARNING)|(NOTICE)|(ERROR)):(?<message>.+)$");
+		int count;
+	public:
+		Error(String^ message) {
+			Match^ m = messageMatch->Match(message);
+			try {
+				if(m->Groups["type"]->Value == "NOTICE") type = ErrorType::Notice;
+				else if(m->Groups["type"]->Value == "WARNING") type = ErrorType::Warning;
+				else if(m->Groups["type"]->Value == "ERROR") type = ErrorType::Error;
+				else type = ErrorType::Unknown;
+				msg = m->Groups["message"]->Value;
+
+				count = 1;
+			} catch(...) {
+				throw gcnew ArgumentException();
+			}
+		}
+
+		property ErrorType Type {
+			ErrorType get() {
+				return type;
+			}
+		}
+
+		property String^ Message {
+			String^ get() {
+				return msg;
+			}
+		}
+
+		property int Count {
+			int get() {
+				return count;
+			}
+		}
+
+		int Increment() {
+			return ++count;
+		}
+
+		virtual bool Equals(Object^ obj) override {
+			if( this->GetType()->Equals(obj->GetType()) ) {
+				Error^ o = (Error^) obj;
+				if(o->Message == this->Message && o->Type == this->Type)
+					return true;
+			}
+			return false;
+		}
+	};
+
+	public ref class ListViewItemComparer : public IComparer {
+	private:
+	   int col;
+	   bool descending, numeral;
+
+	public:
+	   ListViewItemComparer()
+	   {
+		  col = 0;
+		  numeral = false;
+		  descending = true;
+	   }
+
+	   ListViewItemComparer( int column, bool numeric, bool desc )
+	   {
+		  col = column;
+		  numeral = numeric;
+		  descending = desc;
+	   }
+
+	   virtual int Compare( Object^ x, Object^ y )
+	   {
+		   if(numeral) {
+			   int a = Int32::Parse((dynamic_cast<ListViewItem^>(x))->SubItems[ col ]->Text);
+			   int b = Int32::Parse((dynamic_cast<ListViewItem^>(y))->SubItems[ col ]->Text);
+			   return (descending ? 1 : -1) * (b - a);
+		   } else
+				return (descending ? 1 : -1) * String::Compare( (dynamic_cast<ListViewItem^>(x))->SubItems[ col ]->Text,
+														 (dynamic_cast<ListViewItem^>(y))->SubItems[ col ]->Text );
+	   }
+
+	   property int Column {
+		   int get() {
+			   return col;
+		   }
+	   }
+
+	   property bool Descending {
+		   bool get() {
+			   return descending;
+		   }
+	   }
 	};
 }

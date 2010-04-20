@@ -107,7 +107,10 @@ namespace Utilities {
 				 for each(ProcessBarItem^ t in progressStatusTexts)
 					mainStatusText->Text += t + ", ";
 				 mainStatusText->Text = mainStatusText->Text->Remove(mainStatusText->Text->Length-2);
-				 mainStatusText->Text += "...";
+				 if(progress)
+					mainStatusText->Text += "...";
+				 else
+					 mainStatusText->Text += ".";
 			 } else
 				 mainStatusText->Text = "Ready";
 		 }
