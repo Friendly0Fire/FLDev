@@ -11,6 +11,7 @@ namespace DLLEditor {
 	using namespace System::Drawing;
 	using namespace System::Collections::Generic;
 	using namespace Interfaces;
+	using namespace Utilities;
 
 	/// <summary>
 	/// Summary for Main
@@ -97,8 +98,6 @@ namespace DLLEditor {
 	private: System::ComponentModel::BackgroundWorker^  backgroundWorkerFLINI;
 	private: System::ComponentModel::BackgroundWorker^  backgroundWorkerApply;
 	private: System::Windows::Forms::StatusStrip^  mainStatusStrip;
-	private: System::Windows::Forms::ToolStripProgressBar^  mainProgressBar;
-	private: System::Windows::Forms::ToolStripStatusLabel^  mainStatusText;
 
 	private:
 		int										oldScroll,

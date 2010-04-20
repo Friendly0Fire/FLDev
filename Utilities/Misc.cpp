@@ -2,7 +2,7 @@
 #include "Misc.h"
 
 using namespace System;
-using namespace DLLEditor;
+using namespace Utilities;
 
 ProcessBarItem::ProcessBarItem(String^ text, int initTicks, bool prog)
 {
