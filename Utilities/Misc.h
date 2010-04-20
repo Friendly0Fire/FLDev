@@ -2,7 +2,7 @@
 
 using namespace System;
 
-namespace DLLEditor {
+namespace Utilities {
 	public ref class ProcessBarItem {
 		public:
 			ProcessBarItem(String^ text, int initTicks, bool prog);

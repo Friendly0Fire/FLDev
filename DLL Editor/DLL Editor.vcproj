@@ -192,6 +192,10 @@
 			ReferencedProjectIdentifier="{2AF2248A-5BA5-4B17-BAC0-C6DA68207B53}"
 			RelativePathToProject=".\Freelancer Interfaces\Freelancer Interfaces.vcproj"
 		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{FE57BD45-1A71-440C-B4EC-4D0A95E8827B}"
+			RelativePathToProject=".\Utilities\Utilities.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
@@ -205,10 +209,6 @@
 			</File>
 			<File
 				RelativePath=".\DLL Editor.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Misc.cpp"
 				>
 			</File>
 			<File
@@ -246,10 +246,6 @@
 					SubType="Designer"
 					>
 				</File>
-			</File>
-			<File
-				RelativePath=".\Misc.h"
-				>
 			</File>
 			<File
 				RelativePath=".\resource.h"

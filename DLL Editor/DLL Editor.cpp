@@ -4,6 +4,7 @@
 #include "Main.h"
 
 using namespace DLLEditor;
+using namespace Utilities;
 using namespace Interfaces;
 using namespace System::IO;
 using namespace System::Threading;

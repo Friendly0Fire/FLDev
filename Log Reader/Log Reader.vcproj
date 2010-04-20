@@ -2,11 +2,11 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="Freelancer Interfaces"
-	ProjectGUID="{2AF2248A-5BA5-4B17-BAC0-C6DA68207B53}"
-	RootNamespace="FreelancerInterfaces"
+	Name="Log Reader"
+	ProjectGUID="{5FFFF9E4-02C0-4582-BFBB-D860297F7ED4}"
+	RootNamespace="LogReader"
 	Keyword="ManagedCProj"
-	TargetFrameworkVersion="131072"
+	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -20,9 +20,8 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			UseOfATL="0"
-			CharacterSet="2"
+			ConfigurationType="1"
+			CharacterSet="1"
 			ManagedExtensions="2"
 			>
 			<Tool
@@ -60,13 +59,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="user32.lib"
+				AdditionalDependencies="$(NoInherit)"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
+				EntryPointSymbol="main"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -95,9 +93,9 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="1"
-			ManagedExtensions="1"
+			ManagedExtensions="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -134,12 +132,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="user32.lib"
-				OutputFile="$(OutDir)\interfaces.dll"
+				AdditionalDependencies="$(NoInherit)"
 				LinkIncremental="1"
-				GenerateDebugInformation="false"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				EntryPointSymbol="main"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -177,11 +174,6 @@
 			MinFrameworkVersion="131072"
 		/>
 		<AssemblyReference
-			RelativePath="System.XML.dll"
-			AssemblyName="System.Xml, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
-			MinFrameworkVersion="131072"
-		/>
-		<AssemblyReference
 			RelativePath="System.Drawing.dll"
 			AssemblyName="System.Drawing, Version=2.0.0.0, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
@@ -190,6 +182,15 @@
 			RelativePath="System.Windows.Forms.dll"
 			AssemblyName="System.Windows.Forms, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
+		/>
+		<AssemblyReference
+			RelativePath="System.XML.dll"
+			AssemblyName="System.Xml, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
+			MinFrameworkVersion="131072"
+		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{FE57BD45-1A71-440C-B4EC-4D0A95E8827B}"
+			RelativePathToProject=".\Utilities\Utilities.vcproj"
 		/>
 	</References>
 	<Files>
@@ -203,23 +204,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\CRCSupport.cpp"
+				RelativePath=".\Log Reader.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\DLLSupport.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\INISupport.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Interfaces.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Stdafx.cpp"
+				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -245,73 +234,21 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\CRCSupport.h"
+				RelativePath=".\Main.h"
+				FileType="3"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
+				<File
+					RelativePath=".\Main.resX"
+					SubType="Designer"
 					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\DLLSupport.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\includes.h"
-				>
-			</File>
-			<File
-				RelativePath=".\INISupport.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Interfaces.h"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
+				</File>
 			</File>
 			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Stdafx.h"
+				RelativePath=".\stdafx.h"
 				>
 			</File>
 		</Filter>
@@ -328,11 +265,11 @@
 				RelativePath=".\app.rc"
 				>
 			</File>
-			<File
-				RelativePath=".\Deprecated Functions and Classes.txt"
-				>
-			</File>
 		</Filter>
+		<File
+			RelativePath=".\ReadMe.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
