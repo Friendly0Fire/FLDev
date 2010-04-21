@@ -55,6 +55,7 @@ namespace Interfaces
 		public:
 			DLLInterface(String ^dllPath, int id);
 			void Apply();
+			void Apply(String^ filepath);
 			void Parse();
 			void CancelSetEntry(int id, bool infocard, bool local);
 			int GetNextEmptyEntry();

@@ -71,7 +71,10 @@ void DLLInterface::Parse() {
 }
 
 void DLLInterface::Apply() {
-	String^ filepath = String::Copy(dllName);
+	Apply(String::Copy(dllName));
+}
+
+void DLLInterface::Apply(String^ filepath) {
 	LastUpdateResult = false;
 
 	if(loaded == true) {
@@ -85,24 +88,18 @@ void DLLInterface::Apply() {
 
 		if(hasModified == true) {
 			HANDLE resUpdate;
-			String^ dllshortname = dllName->Substring(dllName->LastIndexOf("\\")+1, dllName->Length-1-dllName->LastIndexOf("\\"));
-			String^ dllshortpath = dllName->Substring(0, dllName->LastIndexOf("\\"));
-			filepath = filepath->Trim(gcnew array<wchar_t>{'\\', ' '});
-			String^ finalpath = "";
 			int overwrite = 0;
-			if(filepath == "") filepath = dllshortpath;
-			else if(Directory::Exists(filepath) == false)
-				Directory::CreateDirectory(filepath);
-			finalpath = String::Concat(filepath, "\\", dllshortname);
-			if(File::Exists(finalpath)) {
-				int bakNum = 1;
-				for(; File::Exists(String::Concat(finalpath, ".bak", bakNum.ToString())); bakNum++) {}
-				File::Copy(finalpath, String::Concat(finalpath, ".bak", bakNum.ToString()), true);
-				if(dllName != finalpath)
-					File::Copy(dllName, finalpath, true);
-			} else
-				File::Copy(dllName, finalpath, true);
-			resUpdate = BeginUpdateResourceW( (LPCWSTR) (char*) (void*) Marshal::StringToHGlobalUni(finalpath), FALSE);
+			
+			if(File::Exists(filepath)) {
+				int offset = 1;
+				while(File::Exists(filepath + ".bak" + offset)) offset++;
+				File::Move(filepath, filepath + ".bak" + offset);
+			} else if(!Directory::Exists(Path::GetDirectoryName(filepath)))
+				Directory::CreateDirectory(Path::GetDirectoryName(filepath));
+			
+			File::Copy(dllName, filepath);
+			
+			resUpdate = BeginUpdateResourceW( (LPCWSTR) (char*) (void*) Marshal::StringToHGlobalUni(filepath), FALSE);
 			int addedLength = 0;
 			for(int a = 0; a < 0x10000; a++) {
 				if(infocards[a]->modified == true) {
@@ -154,7 +151,7 @@ void DLLInterface::Apply() {
 					}
 					if(addedLength >= 2048) {
 						EndUpdateResource(resUpdate, FALSE);
-						resUpdate = BeginUpdateResourceW( (LPCWSTR) (char*) (void*) Marshal::StringToHGlobalUni(finalpath), FALSE);
+						resUpdate = BeginUpdateResourceW( (LPCWSTR) (char*) (void*) Marshal::StringToHGlobalUni(filepath), FALSE);
 						addedLength = 0;
 					}
 				}
@@ -340,7 +337,10 @@ void DLLManager::mApply(String^ folderpath) {
 	bool result_state = true;
 	String^ erroneous_dlls = "";
 	for(int a = 0; a < dlls->Length; a++) {
-		dlls[a]->Apply();
+		if(folderpath != "")
+			dlls[a]->Apply(Path::Combine(folderpath, Path::GetFileName(dlls[a]->DllFile)));
+		else
+			dlls[a]->Apply();
 		if(dlls[a]->LastUpdateResult == false) {
 			result_state = false;
 			erroneous_dlls = String::Concat(erroneous_dlls, ", ", dlls[a]->DllFile->Substring(dlls[a]->DllFile->LastIndexOf("\\")+1));
