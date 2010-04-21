@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Log Reader", "Log Reader\Lo
 		{FE57BD45-1A71-440C-B4EC-4D0A95E8827B} = {FE57BD45-1A71-440C-B4EC-4D0A95E8827B}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8540DF80-8765-4C21-835A-D7078D9053A8}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utilities", "Utilities\Utilities.vcproj", "{FE57BD45-1A71-440C-B4EC-4D0A95E8827B}"
 EndProject
 Global

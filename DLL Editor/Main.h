@@ -27,8 +27,9 @@ namespace DLLEditor {
 	public:
 		Main(void)
 		{
-			mainStatus = gcnew CompositeStatusBar();
 			InitializeComponent();
+			mainStatus = gcnew CompositeStatusBar();
+			this->Controls->Add(this->mainStatus);
 
 			progressStatusTexts = gcnew List<ProcessBarItem^>();
 			this->backgroundWorkerFLINI->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Main::backgroundWorkerFLINI_RunWorkerCompleted);
@@ -53,13 +54,12 @@ namespace DLLEditor {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::TabControl^  mainTab;
-	private: System::Windows::Forms::TabPage^  tabSettings;
-	private: System::Windows::Forms::TabPage^  editTab;
-	protected: 
-
-
-	private: System::Windows::Forms::Button^  btnBrowseINI;
+	private:
+		Utilities::CompositeStatusBar^ mainStatus;
+		System::Windows::Forms::TabControl^  mainTab;
+		System::Windows::Forms::TabPage^  tabSettings;
+		System::Windows::Forms::TabPage^  editTab;
+		System::Windows::Forms::Button^  btnBrowseINI;
 
 	private: System::Windows::Forms::TextBox^  txtINIPath;
 
@@ -101,7 +101,7 @@ namespace DLLEditor {
 
 	private:
 		int										oldScroll,
-												activeDll;
+			activeDll;
 		System::Windows::Forms::ListView^			lstDLLExplorer;
 		System::Windows::Forms::ColumnHeader^	lstDLLExplorerID;
 		System::Windows::Forms::ColumnHeader^	lstDLLExplorerLID;
@@ -123,18 +123,15 @@ namespace DLLEditor {
 	private: System::Windows::Forms::ComboBox^  comboIDS;
 	private: System::Windows::Forms::ToolStrip^  toolsEntry;
 	private: System::Windows::Forms::RadioButton^  radioSInfocard;
-private: System::Windows::Forms::Label^  lblIDSInfo;
+	private: System::Windows::Forms::Label^  lblIDSInfo;
 
 
-private: System::Windows::Forms::Label^  label3;
-private: System::Windows::Forms::TextBox^  txtLocalIDS;
-private: System::Windows::Forms::Timer^  undoTimer;
-private: System::Windows::Forms::ToolStripButton^  entryUndo;
-private: System::Windows::Forms::ToolStripButton^  entryRedo;
-private: System::ComponentModel::IContainer^  components;
-
-
-private: CompositeStatusBar^ mainStatus;
+	private: System::Windows::Forms::Label^  label3;
+	private: System::Windows::Forms::TextBox^  txtLocalIDS;
+	private: System::Windows::Forms::Timer^  undoTimer;
+	private: System::Windows::Forms::ToolStripButton^  entryUndo;
+	private: System::Windows::Forms::ToolStripButton^  entryRedo;
+	private: System::ComponentModel::IContainer^  components;
 
 
 
@@ -228,7 +225,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->mainTab->Location = System::Drawing::Point(0, 0);
 			this->mainTab->Name = L"mainTab";
 			this->mainTab->SelectedIndex = 0;
-			this->mainTab->Size = System::Drawing::Size(784, 540);
+			this->mainTab->Size = System::Drawing::Size(784, 562);
 			this->mainTab->TabIndex = 0;
 			// 
 			// tabSettings
@@ -241,7 +238,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->tabSettings->Location = System::Drawing::Point(4, 22);
 			this->tabSettings->Name = L"tabSettings";
 			this->tabSettings->Padding = System::Windows::Forms::Padding(3);
-			this->tabSettings->Size = System::Drawing::Size(776, 514);
+			this->tabSettings->Size = System::Drawing::Size(776, 536);
 			this->tabSettings->TabIndex = 0;
 			this->tabSettings->Text = L"Primary Settings";
 			// 
@@ -251,7 +248,7 @@ private: CompositeStatusBar^ mainStatus;
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->btnApply->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 9.75F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point, 
 				static_cast<System::Byte>(0)));
-			this->btnApply->Location = System::Drawing::Point(284, 468);
+			this->btnApply->Location = System::Drawing::Point(284, 490);
 			this->btnApply->MinimumSize = System::Drawing::Size(100, 25);
 			this->btnApply->Name = L"btnApply";
 			this->btnApply->Size = System::Drawing::Size(209, 38);
@@ -472,7 +469,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->editTab->Location = System::Drawing::Point(4, 22);
 			this->editTab->Name = L"editTab";
 			this->editTab->Padding = System::Windows::Forms::Padding(3);
-			this->editTab->Size = System::Drawing::Size(776, 514);
+			this->editTab->Size = System::Drawing::Size(776, 536);
 			this->editTab->TabIndex = 1;
 			this->editTab->Text = L"Edition";
 			// 
@@ -490,7 +487,7 @@ private: CompositeStatusBar^ mainStatus;
 			// splitDLLEditor.Panel2
 			// 
 			this->splitDLLEditor->Panel2->Controls->Add(this->tableLayoutPanel1);
-			this->splitDLLEditor->Size = System::Drawing::Size(770, 508);
+			this->splitDLLEditor->Size = System::Drawing::Size(770, 530);
 			this->splitDLLEditor->SplitterDistance = 256;
 			this->splitDLLEditor->TabIndex = 1;
 			// 
@@ -503,7 +500,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->grpDLLExplorer->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->grpDLLExplorer->Location = System::Drawing::Point(0, 0);
 			this->grpDLLExplorer->Name = L"grpDLLExplorer";
-			this->grpDLLExplorer->Size = System::Drawing::Size(254, 506);
+			this->grpDLLExplorer->Size = System::Drawing::Size(254, 528);
 			this->grpDLLExplorer->TabIndex = 0;
 			this->grpDLLExplorer->TabStop = false;
 			this->grpDLLExplorer->Text = L"DLL Explorer";
@@ -523,7 +520,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->lstDLLExplorer->Location = System::Drawing::Point(3, 37);
 			this->lstDLLExplorer->MultiSelect = false;
 			this->lstDLLExplorer->Name = L"lstDLLExplorer";
-			this->lstDLLExplorer->Size = System::Drawing::Size(231, 449);
+			this->lstDLLExplorer->Size = System::Drawing::Size(231, 471);
 			this->lstDLLExplorer->TabIndex = 0;
 			this->lstDLLExplorer->UseCompatibleStateImageBehavior = false;
 			this->lstDLLExplorer->View = System::Windows::Forms::View::Details;
@@ -555,7 +552,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->lstScroll->Location = System::Drawing::Point(234, 37);
 			this->lstScroll->Maximum = 65536;
 			this->lstScroll->Name = L"lstScroll";
-			this->lstScroll->Size = System::Drawing::Size(17, 449);
+			this->lstScroll->Size = System::Drawing::Size(17, 471);
 			this->lstScroll->TabIndex = 1;
 			this->lstScroll->ValueChanged += gcnew System::EventHandler(this, &Main::lstScroll_ValueChanged);
 			// 
@@ -576,7 +573,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->chkDLLExplorerShowEmpty->Checked = true;
 			this->chkDLLExplorerShowEmpty->CheckState = System::Windows::Forms::CheckState::Checked;
 			this->chkDLLExplorerShowEmpty->Dock = System::Windows::Forms::DockStyle::Bottom;
-			this->chkDLLExplorerShowEmpty->Location = System::Drawing::Point(3, 486);
+			this->chkDLLExplorerShowEmpty->Location = System::Drawing::Point(3, 508);
 			this->chkDLLExplorerShowEmpty->Name = L"chkDLLExplorerShowEmpty";
 			this->chkDLLExplorerShowEmpty->Size = System::Drawing::Size(248, 17);
 			this->chkDLLExplorerShowEmpty->TabIndex = 3;
@@ -611,7 +608,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle()));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Percent, 100)));
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle()));
-			this->tableLayoutPanel1->Size = System::Drawing::Size(508, 506);
+			this->tableLayoutPanel1->Size = System::Drawing::Size(508, 528);
 			this->tableLayoutPanel1->TabIndex = 1;
 			// 
 			// radioSInfocard
@@ -629,7 +626,6 @@ private: CompositeStatusBar^ mainStatus;
 			this->radioSInfocard->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
 			this->radioSInfocard->UseVisualStyleBackColor = true;
 			this->radioSInfocard->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Main::radioSInfocard_MouseClick);
-			this->radioSInfocard->CheckedChanged += gcnew System::EventHandler(this, &Main::radioSInfocard_CheckedChanged);
 			// 
 			// comboIDS
 			// 
@@ -645,7 +641,6 @@ private: CompositeStatusBar^ mainStatus;
 			this->comboIDS->TabIndex = 4;
 			this->comboIDS->SelectedIndexChanged += gcnew System::EventHandler(this, &Main::comboIDS_SelectedIndexChanged);
 			this->comboIDS->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Main::comboIDS_KeyUp);
-			this->comboIDS->TextUpdate += gcnew System::EventHandler(this, &Main::comboIDS_TextUpdate);
 			// 
 			// radioName
 			// 
@@ -660,7 +655,6 @@ private: CompositeStatusBar^ mainStatus;
 			this->radioName->Text = L"Name";
 			this->radioName->UseVisualStyleBackColor = true;
 			this->radioName->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Main::radioName_MouseClick);
-			this->radioName->CheckedChanged += gcnew System::EventHandler(this, &Main::radioName_CheckedChanged);
 			// 
 			// radioInfocard
 			// 
@@ -677,7 +671,6 @@ private: CompositeStatusBar^ mainStatus;
 			this->radioInfocard->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
 			this->radioInfocard->UseVisualStyleBackColor = true;
 			this->radioInfocard->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Main::radioInfocard_MouseClick);
-			this->radioInfocard->CheckedChanged += gcnew System::EventHandler(this, &Main::radioInfocard_CheckedChanged);
 			// 
 			// txtEntry
 			// 
@@ -690,7 +683,7 @@ private: CompositeStatusBar^ mainStatus;
 			this->txtEntry->Multiline = true;
 			this->txtEntry->Name = L"txtEntry";
 			this->txtEntry->ScrollBars = System::Windows::Forms::ScrollBars::Both;
-			this->txtEntry->Size = System::Drawing::Size(488, 390);
+			this->txtEntry->Size = System::Drawing::Size(488, 412);
 			this->txtEntry->TabIndex = 2;
 			this->txtEntry->TextChanged += gcnew System::EventHandler(this, &Main::txtEntry_TextChanged);
 			// 
@@ -733,7 +726,7 @@ private: CompositeStatusBar^ mainStatus;
 			// 
 			this->lblIDSInfo->AutoSize = true;
 			this->lblIDSInfo->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->lblIDSInfo->Location = System::Drawing::Point(3, 480);
+			this->lblIDSInfo->Location = System::Drawing::Point(3, 502);
 			this->lblIDSInfo->Name = L"lblIDSInfo";
 			this->lblIDSInfo->Size = System::Drawing::Size(197, 26);
 			this->lblIDSInfo->TabIndex = 11;
@@ -743,7 +736,7 @@ private: CompositeStatusBar^ mainStatus;
 			// 
 			this->label3->AutoSize = true;
 			this->label3->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->label3->Location = System::Drawing::Point(206, 480);
+			this->label3->Location = System::Drawing::Point(206, 502);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(146, 26);
 			this->label3->TabIndex = 9;
@@ -753,11 +746,10 @@ private: CompositeStatusBar^ mainStatus;
 			// txtLocalIDS
 			// 
 			this->txtLocalIDS->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->txtLocalIDS->Location = System::Drawing::Point(358, 483);
+			this->txtLocalIDS->Location = System::Drawing::Point(358, 505);
 			this->txtLocalIDS->Name = L"txtLocalIDS";
 			this->txtLocalIDS->Size = System::Drawing::Size(147, 20);
 			this->txtLocalIDS->TabIndex = 10;
-			this->txtLocalIDS->TextChanged += gcnew System::EventHandler(this, &Main::txtLocalIDS_TextChanged);
 			this->txtLocalIDS->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Main::txtLocalIDS_KeyUp);
 			// 
 			// openFLINI
@@ -792,13 +784,11 @@ private: CompositeStatusBar^ mainStatus;
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(784, 562);
 			this->Controls->Add(this->mainTab);
-			this->Controls->Add(this->mainStatus);
 			this->HelpButton = true;
 			this->Name = L"Main";
 			this->Text = L"Freelancer Developer - DLL Editor";
 			this->TransparencyKey = System::Drawing::Color::Magenta;
 			this->Load += gcnew System::EventHandler(this, &Main::Main_Load);
-			this->Resize += gcnew System::EventHandler(this, &Main::Main_Resize);
 			this->mainTab->ResumeLayout(false);
 			this->tabSettings->ResumeLayout(false);
 			this->grpOut->ResumeLayout(false);
@@ -818,191 +808,173 @@ private: CompositeStatusBar^ mainStatus;
 			this->toolsEntry->ResumeLayout(false);
 			this->toolsEntry->PerformLayout();
 			this->ResumeLayout(false);
-			this->PerformLayout();
 
 		}
 #pragma endregion
 
-private:
-	void loadINI();
-	void browseAndLoadINI();
-	void updateDLLList(Object^ sender, RunWorkerCompletedEventArgs^ e);
-	void updateDLLList();
-	void reloadDLL();
-	bool confirmApply();
-	bool dataLossAsk();
+	private:
+		void loadINI();
+		void browseAndLoadINI();
+		void updateDLLList(Object^ sender, RunWorkerCompletedEventArgs^ e);
+		void updateDLLList();
+		void reloadDLL();
+		bool confirmApply();
+		bool dataLossAsk();
 
-	array<String^>^ dllNames;
-	Interfaces::DLLManager^ dlls;
-	String^ flINIPath;
-	List<ProcessBarItem^>^ progressStatusTexts;
-	bool changingSelectedIDS;
-	int currentEntry;
+		array<String^>^ dllNames;
+		Interfaces::DLLManager^ dlls;
+		String^ flINIPath;
+		List<ProcessBarItem^>^ progressStatusTexts;
+		bool changingSelectedIDS;
+		int currentEntry;
 
-private: System::Void btnReloadINI_Click(System::Object^  sender, System::EventArgs^  e) {
-			 if(dataLossAsk())
-				loadINI();
-		 }
-
-private: System::Void btnBrowseINI_Click(System::Object^  sender, System::EventArgs^  e) {
-			 if(dlls == nullptr || dataLossAsk())
-				browseAndLoadINI();
-		 }
-
-private: System::Void lstDLLs_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if(lstDLLs->SelectedIndices->Count > 0)
-				 txtSelectedDLLPath->Text = lstDLLs->SelectedItems[0]->SubItems[1]->Text;
-		 }
-private: System::Void btnReloadDLL_Click(System::Object^  sender, System::EventArgs^  e) {
-			 if(dlls != nullptr && System::IO::File::Exists(txtSelectedDLLPath->Text)) {
-				 if(!dlls->mIsLoaded(lstDLLs->SelectedIndices[0]) || dataLossAsk())
-					reloadDLL();
+	private: System::Void btnReloadINI_Click(System::Object^  sender, System::EventArgs^  e) {
+				 if(dataLossAsk())
+					 loadINI();
 			 }
-		 }
-private: System::Void btnBrowseDLL_Click(System::Object^  sender, System::EventArgs^  e) {
-			 if(lstDLLs->SelectedIndices->Count > 0) {
-				 openDLL->FileName = System::IO::Path::GetFileName(txtSelectedDLLPath->Text);
-				 if(openDLL->ShowDialog() == Windows::Forms::DialogResult::OK) {
-					 txtSelectedDLLPath->Text = openDLL->FileName;
-					 reloadDLL();
+
+	private: System::Void btnBrowseINI_Click(System::Object^  sender, System::EventArgs^  e) {
+				 if(dlls == nullptr || dataLossAsk())
+					 browseAndLoadINI();
+			 }
+
+	private: System::Void lstDLLs_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+				 if(lstDLLs->SelectedIndices->Count > 0)
+					 txtSelectedDLLPath->Text = lstDLLs->SelectedItems[0]->SubItems[1]->Text;
+			 }
+	private: System::Void btnReloadDLL_Click(System::Object^  sender, System::EventArgs^  e) {
+				 if(dlls != nullptr && System::IO::File::Exists(txtSelectedDLLPath->Text)) {
+					 if(!dlls->mIsLoaded(lstDLLs->SelectedIndices[0]) || dataLossAsk())
+						 reloadDLL();
 				 }
 			 }
-		 }
-private: System::Void Main_Load(System::Object^  sender, System::EventArgs^  e) {
-			 RefreshList(lstScroll->Value, 0);
-			 txtOutPath->Text = System::IO::Path::Combine(Application::StartupPath, "Output\\DLL");
-			 if(!System::IO::Directory::Exists(txtOutPath->Text))
-				 System::IO::Directory::CreateDirectory(txtOutPath->Text);
-		 }
-private: System::Void btnOutOpen_Click(System::Object^  sender, System::EventArgs^  e) {
-			 System::Diagnostics::Process::Start("explorer", "\"" + txtOutPath->Text + "\"");
-		 }
-private: System::Void btnApply_Click(System::Object^  sender, System::EventArgs^  e) {
-			 if(dlls != nullptr && confirmApply()) {
-				 mainStatus->addStatusText("Applying changes", -1, true);
-				 backgroundWorkerApply->RunWorkerAsync();
-				 this->Cursor = Cursors::WaitCursor;
+	private: System::Void btnBrowseDLL_Click(System::Object^  sender, System::EventArgs^  e) {
+				 if(lstDLLs->SelectedIndices->Count > 0) {
+					 openDLL->FileName = System::IO::Path::GetFileName(txtSelectedDLLPath->Text);
+					 if(openDLL->ShowDialog() == Windows::Forms::DialogResult::OK) {
+						 txtSelectedDLLPath->Text = openDLL->FileName;
+						 reloadDLL();
+					 }
+				 }
 			 }
-		 }
-private: System::Void backgroundWorkerFLINI_DoWork(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e) {
-			 dlls = gcnew Interfaces::DLLManager(dllNames);
-		 }
-private: System::Void backgroundWorkerApply_DoWork(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e) {
-			 dlls->mApply(txtOutPath->Text);
-		 }
-private: System::Void backgroundWorkerGeneric_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
-			 this->Cursor = Cursors::Default;
-		 }
-private: System::Void backgroundWorkerFLINI_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
-			 mainStatus->removeStatusText("Reading INI");
-			 updateDLLList();
-		 }
-private: System::Void backgroundWorkerApply_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
-			 mainStatus->removeStatusText("Applying changes");
-		 }
+	private: System::Void Main_Load(System::Object^  sender, System::EventArgs^  e) {
+				 RefreshList(lstScroll->Value, 0);
+				 txtOutPath->Text = System::IO::Path::Combine(Application::StartupPath, "Output\\DLL");
+				 if(!System::IO::Directory::Exists(txtOutPath->Text))
+					 System::IO::Directory::CreateDirectory(txtOutPath->Text);
+			 }
+	private: System::Void btnOutOpen_Click(System::Object^  sender, System::EventArgs^  e) {
+				 System::Diagnostics::Process::Start("explorer", "\"" + txtOutPath->Text + "\"");
+			 }
+	private: System::Void btnApply_Click(System::Object^  sender, System::EventArgs^  e) {
+				 if(dlls != nullptr && confirmApply()) {
+					 mainStatus->addStatusText("Applying changes", -1, true);
+					 backgroundWorkerApply->RunWorkerAsync(txtOutPath->Text);
+					 this->Cursor = Cursors::WaitCursor;
+				 }
+			 }
+	private: System::Void backgroundWorkerFLINI_DoWork(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e) {
+				 dlls = gcnew Interfaces::DLLManager(dllNames);
+			 }
+	private: System::Void backgroundWorkerApply_DoWork(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e) {
+				 dlls->mApply((String^) e->Argument);
+			 }
+	private: System::Void backgroundWorkerGeneric_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
+				 this->Cursor = Cursors::Default;
+			 }
+	private: System::Void backgroundWorkerFLINI_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
+				 mainStatus->removeStatusText("Reading INI");
+				 updateDLLList();
+			 }
+	private: System::Void backgroundWorkerApply_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
+				 mainStatus->removeStatusText("Applying changes");
+			 }
 
-		void RefreshList(int dllID);
-		void RefreshList(int start, int overwrite);
-		void showNewEntry(int id);
-		void refreshEntry();
-		void radioType(DLLEntry type);
-		void addUndo();
+			 void RefreshList(int dllID);
+			 void RefreshList(int start, int overwrite);
+			 void showNewEntry(int id);
+			 void refreshEntry();
+			 void radioType(DLLEntry type);
+			 void addUndo();
+			 void lstScroll_ValueChanged(Object^  sender, System::EventArgs^ e) {
+				RefreshList(lstScroll->Value, 0);
+			 }
+			 System::Void lstDLLExplorer_MouseWheel(System::Object^  sender, MouseEventArgs^  e);
+			 void lstDLLExplorer_ItemActivate(System::Object^  sender, System::EventArgs^  e);
 
-		System::Void Main_Resize(System::Object^  sender, System::EventArgs^  e) {
-			
-		}
-		void lstScroll_ValueChanged(Object^  sender, System::EventArgs^ e);
-		System::Void lstDLLExplorer_MouseWheel(System::Object^  sender, MouseEventArgs^  e);
-		void lstDLLExplorer_ItemActivate(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void comboDLLExplorer_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+				 if(comboDLLExplorer->SelectedIndex >= 0)
+					 RefreshList(comboDLLExplorer->SelectedIndex);
+			 }
+	private: System::Void chkDLLExplorerShowEmpty_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+				 RefreshList(lstScroll->Value, 0);
+			 }
+	private: System::Void lstDLLExplorer_Resize(System::Object^  sender, System::EventArgs^  e) {
+				 RefreshList(lstScroll->Value, 0);
+			 }
+	private: System::Void comboIDS_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
+				 int ids;
+				 if(Int32::TryParse(comboIDS->Text, ids))
+					 showNewEntry(ids);
+			 }
+	private: System::Void txtEntry_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				 if(changingSelectedIDS) return;
 
-private: System::Void comboDLLExplorer_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if(comboDLLExplorer->SelectedIndex >= 0)
-				 RefreshList(comboDLLExplorer->SelectedIndex);
-		 }
-private: System::Void chkDLLExplorerShowEmpty_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			 RefreshList(lstScroll->Value, 0);
-		 }
-private: System::Void lstDLLExplorer_Resize(System::Object^  sender, System::EventArgs^  e) {
-			 RefreshList(lstScroll->Value, 0);
-		 }
-private: System::Void comboIDS_SelectedIndexChanged(System::Object^  sender, System::EventArgs^  e) {
-			 int ids;
-			 if(Int32::TryParse(comboIDS->Text, ids))
-				showNewEntry(ids);
-		 }
-private: System::Void comboIDS_TextUpdate(System::Object^  sender, System::EventArgs^  e) {
-			 
-		 }
-private: System::Void radioName_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			 
-		 }
-private: System::Void radioInfocard_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			 
-		 }
-private: System::Void radioSInfocard_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-			 
-		 }
-private: System::Void txtLocalIDS_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 
-		 }
-private: System::Void txtEntry_TextChanged(System::Object^  sender, System::EventArgs^  e) {
-			 if(changingSelectedIDS) return;
+				 undoTimer->Stop();
+				 undoTimer->Enabled = false;
+				 undoTimer->Enabled = true;
+				 undoTimer->Start();
+			 }
+	private: System::Void undoTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
+				 addUndo();
+			 }
+	private: System::Void entryUndo_Click(System::Object^  sender, System::EventArgs^  e) {
+				 IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
+				 if(i->canUndo())
+					 i->Undo();
 
-			 undoTimer->Stop();
-			 undoTimer->Enabled = false;
-			 undoTimer->Enabled = true;
-			 undoTimer->Start();
-		 }
-private: System::Void undoTimer_Tick(System::Object^  sender, System::EventArgs^  e) {
-			 addUndo();
-		 }
-private: System::Void entryUndo_Click(System::Object^  sender, System::EventArgs^  e) {
-			 IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
-			 if(i->canUndo())
-				i->Undo();
+				 refreshEntry();
 
-			 refreshEntry();
+				 if(!i->canUndo()) entryUndo->Enabled = false;
+				 entryRedo->Enabled = true;
 
-			 if(!i->canUndo()) entryUndo->Enabled = false;
-			 entryRedo->Enabled = true;
+				 RefreshList(lstScroll->Value, 0);
+			 }
+	private: System::Void entryRedo_Click(System::Object^  sender, System::EventArgs^  e) {
+				 IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
+				 if(i->canRedo())
+					 i->Redo();
 
-			 RefreshList(lstScroll->Value, 0);
-		 }
-private: System::Void entryRedo_Click(System::Object^  sender, System::EventArgs^  e) {
-			 IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
-			 if(i->canRedo())
-				i->Redo();
+				 refreshEntry();
 
-			 refreshEntry();
+				 if(!i->canRedo()) entryRedo->Enabled = false;
+				 entryUndo->Enabled = true;
 
-			 if(!i->canRedo()) entryRedo->Enabled = false;
-			 entryUndo->Enabled = true;
-
-			 RefreshList(lstScroll->Value, 0);
-		 }
-private: System::Void comboIDS_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 int ids;
-			 if(Int32::TryParse(comboIDS->Text, ids) && ids != currentEntry)
-				showNewEntry(ids);
-		 }
-private: System::Void txtLocalIDS_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 int ids;
-			 if(Int32::TryParse(txtLocalIDS->Text, ids) && ids != currentEntry)
-				showNewEntry(comboDLLExplorer->SelectedIndex * 0x10000 + ids);
-		 }
-private: System::Void radioInfocard_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 refreshEntry();
-		 }
-private: System::Void radioSInfocard_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 refreshEntry();
-		 }
-private: System::Void radioName_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
-			 if(changingSelectedIDS) return;
-			 refreshEntry();
-		 }
-};
+				 RefreshList(lstScroll->Value, 0);
+			 }
+	private: System::Void comboIDS_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+				 if(changingSelectedIDS) return;
+				 int ids;
+				 if(Int32::TryParse(comboIDS->Text, ids) && ids != currentEntry)
+					 showNewEntry(ids);
+			 }
+	private: System::Void txtLocalIDS_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+				 if(changingSelectedIDS) return;
+				 int ids;
+				 if(Int32::TryParse(txtLocalIDS->Text, ids) && ids != currentEntry)
+					 showNewEntry(comboDLLExplorer->SelectedIndex * 0x10000 + ids);
+			 }
+	private: System::Void radioInfocard_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+				 if(changingSelectedIDS) return;
+				 refreshEntry();
+			 }
+	private: System::Void radioSInfocard_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+				 if(changingSelectedIDS) return;
+				 refreshEntry();
+			 }
+	private: System::Void radioName_MouseClick(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+				 if(changingSelectedIDS) return;
+				 refreshEntry();
+			 }
+	};
 }

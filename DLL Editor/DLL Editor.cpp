@@ -114,8 +114,9 @@ void Main::RefreshList(int start, int overwrite) {
 		DLLInterface^ dllFile = dlls[activeDll];
 		array<ListViewItem^>^ lvic = gcnew array<ListViewItem^>(0x10000);
 		bool repeat = false;
-		int pass = 0;
+		int pass = 0, passAt = 0;
 		for(int a = start; (a-pass-start <= 1 || lstDLLExplorer->Items[a-pass-start-1]->Bounds.Bottom <= lstDLLExplorer->ClientRectangle.Bottom) && a < 0x10000; a++) {
+			if(a == currentEntry) passAt = pass;
 			ListViewItem^ i = gcnew ListViewItem((a + dllFile->ID*0x10000).ToString());
 			i->SubItems->Add(a.ToString());
 			switch(dllFile->TypeL[a]) {
@@ -128,11 +129,12 @@ void Main::RefreshList(int start, int overwrite) {
 				i->SubItems->Add(SimpleInfocards::StripTags(dllFile->EntryL[a, true]));
 				break;
 			case DLLEntry::Both:
-				i->SubItems->Add("Both");
 				if(!repeat) {
+					i->SubItems->Add("Both (Name)");
 					i->SubItems->Add(dllFile->EntryL[a, false]);
 					repeat = true;
 				} else {
+					i->SubItems->Add("Both (Infocard)");
 					i->SubItems->Add(SimpleInfocards::StripTags(dllFile->EntryL[a, true]));
 					repeat = false;
 				}
@@ -163,16 +165,16 @@ void Main::RefreshList(int start, int overwrite) {
 					i->Selected = true;
 			}
 		}
-		if(currentEntry >= 0) lstDLLExplorer->Items[currentEntry - dllFile->ID * 0x10000 - start]->Selected = true;
+		
+		try {
+			if(dlls->localize(currentEntry) >= start + passAt) lstDLLExplorer->Items[dlls->localize(currentEntry) - start - passAt]->Selected = true;
+		} catch(...) {}
+		
 		this->lstDLLExplorer->ResumeLayout();
 	} else {
 		lstDLLExplorer->Items->Clear();
 		lstDLLExplorer->Items->Add("");
 	}
-}
-
-void Main::lstScroll_ValueChanged(Object^  sender, System::EventArgs^ e) {
-	RefreshList(lstScroll->Value, 0);
 }
 
 System::Void Main::lstDLLExplorer_MouseWheel(System::Object^  sender, MouseEventArgs^  e) {
@@ -220,6 +222,14 @@ void Main::showNewEntry(int id) {
 	comboIDS->Text = "" + id;
 	txtLocalIDS->Text = "" + dlls->localize(id);
 	lblIDSInfo->Text = "DLL " + dlls->getDllId(id) + " of " + dlls->getDLLCount() + ".";
+	
+	int localDLL = dlls->localize(id);
+	for each(ListViewItem^ lvi in lstDLLExplorer->Items) {
+		if(lvi->SubItems[0]->Text == "" + id) {
+			lvi->Selected = true;
+			break;
+		}
+	}
 
 	currentEntry = id;
 
@@ -241,7 +251,6 @@ void Main::refreshEntry() {
 	entryUndo->Enabled = i->canUndo() > 0 ? true : false;
 }
 
-// TODO: Force changing when selected by user
 void Main::radioType(DLLEntry type) {
 	changingSelectedIDS = true;
 
