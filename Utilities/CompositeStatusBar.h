@@ -65,7 +65,7 @@ namespace Utilities {
 		 void addStatusText(String^ text, int ticks, bool progress, bool duplicate) {
 			 if(duplicate) {
 				 for each(ProcessBarItem^ t in progressStatusTexts) {
-					 if(text->Equals(t))
+					 if(t->Equals(text))
 						 return updateStatusText();
 				 }
 			 }

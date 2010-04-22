@@ -4,7 +4,7 @@ using namespace System;
 using namespace System::Text::RegularExpressions;
 using namespace System::Collections;
 using namespace System::Windows::Forms;
-
+using namespace Interfaces;
 
 namespace Utilities {
 	public ref class ProcessBarItem {
@@ -138,5 +138,70 @@ namespace Utilities {
 			   return descending;
 		   }
 	   }
+	};
+	
+	public ref class SearchRequest {
+		public:
+			SearchRequest(String^ q, bool rg, bool cs, bool ws) {
+				query = q;
+				regex = rg;
+				caseSensitive = cs;
+				wholeStrings = ws;
+			}
+			
+			property String^ Query {
+				String^ get() { return query; }
+			}
+			
+			property bool Regex {
+				bool get() { return regex; }
+			}
+			
+			property bool CaseSensitive {
+				bool get() { return caseSensitive; }
+			}
+			
+			property bool WholeStrings {
+				bool get() { return wholeStrings; }
+			}
+		private:
+			String^ query;
+			bool regex, caseSensitive, wholeStrings;
+	};
+	
+	public ref class SearchResult {
+		public:
+			SearchResult(IDSItem^ item, bool infocard, int index, DLLInterface^ dll) {
+				i = item;
+				ix = index;
+				info = infocard;
+				dllName = IO::Path::GetFileName(dll->DllFile);
+				dllId = dll->ID;
+			}
+			
+			property IDSItem^ Item {
+				IDSItem^ get() { return i; }
+			}
+			
+			property bool Infocard {
+				bool get() { return info; }
+			}
+			
+			property int Index {
+				int get() { return ix; }
+			}
+			
+			property int ID {
+				int get() { return dllId; }
+			}
+			
+			property String^ DllName {
+				String^ get() { return dllName; }
+			}
+		private:
+			IDSItem^ i;
+			bool info;
+			int ix, dllId;
+			String^ dllName;
 	};
 }

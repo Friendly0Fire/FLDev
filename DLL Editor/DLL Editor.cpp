@@ -58,14 +58,18 @@ void Main::updateDLLList() {
 	comboDLLExplorer->Items->Clear();
 
 	int at = 0;
+	bool enableSearch = false;
 	for each(String^ dll in dllNames) {
 		ListViewItem^ i = gcnew ListViewItem(dll);
 		i->SubItems->Add(Path::GetFullPath(dll));
 		i->SubItems->Add(dlls->mIsLoaded(at) ? "Loaded" : "Error");
+		if(dlls->mIsLoaded(at)) enableSearch = true;
 		lstDLLs->Items->Add(i);
 		comboDLLExplorer->Items->Add(dll);
 		at++;
 	}
+	if(enableSearch) btnSearch->Enabled = true;
+	else btnSearch->Enabled = false;
 }
 
 void Main::reloadDLL() {

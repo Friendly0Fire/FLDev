@@ -12,6 +12,7 @@ namespace DLLEditor {
 	using namespace System::Collections::Generic;
 	using namespace Interfaces;
 	using namespace Utilities;
+	using namespace System::Text::RegularExpressions;
 
 	/// <summary>
 	/// Summary for Main
@@ -140,7 +141,8 @@ private: System::Windows::Forms::CheckBox^  chkCaseSensitive;
 private: System::Windows::Forms::CheckBox^  chkRegex;
 private: System::Windows::Forms::Button^  btnSearch;
 private: System::Windows::Forms::TextBox^  txtSearch;
-private: System::Windows::Forms::ListView^  listView1;
+private: System::Windows::Forms::ListView^  lstSearch;
+
 private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
 private: System::Windows::Forms::SplitContainer^  splitSearch;
 private: System::Windows::Forms::ColumnHeader^  colSearchID;
@@ -150,6 +152,7 @@ private: System::Windows::Forms::ColumnHeader^  colSearchType;
 private: System::Windows::Forms::ColumnHeader^  colSearchContent;
 private: System::Windows::Forms::Label^  lblSearchInput;
 private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
+private: System::Windows::Forms::TextBox^  txtRegexTest;
 
 
 
@@ -224,27 +227,28 @@ private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
 			this->entryRedo = (gcnew System::Windows::Forms::ToolStripButton());
 			this->entrySave = (gcnew System::Windows::Forms::ToolStripButton());
 			this->txtEntry = (gcnew System::Windows::Forms::TextBox());
+			this->tabSearch = (gcnew System::Windows::Forms::TabPage());
+			this->lstSearch = (gcnew System::Windows::Forms::ListView());
+			this->colSearchID = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colSearchDLL = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colSearchLocal = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colSearchType = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colSearchContent = (gcnew System::Windows::Forms::ColumnHeader());
+			this->splitSearch = (gcnew System::Windows::Forms::SplitContainer());
+			this->txtSearch = (gcnew System::Windows::Forms::TextBox());
+			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->chkRegex = (gcnew System::Windows::Forms::CheckBox());
+			this->chkCaseSensitive = (gcnew System::Windows::Forms::CheckBox());
+			this->chkWhole = (gcnew System::Windows::Forms::CheckBox());
+			this->btnSearch = (gcnew System::Windows::Forms::Button());
+			this->txtRegexTest = (gcnew System::Windows::Forms::TextBox());
+			this->lblSearchInput = (gcnew System::Windows::Forms::Label());
 			this->helpProvider = (gcnew System::Windows::Forms::HelpProvider());
 			this->openFLINI = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->openDLL = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->backgroundWorkerFLINI = (gcnew System::ComponentModel::BackgroundWorker());
 			this->backgroundWorkerApply = (gcnew System::ComponentModel::BackgroundWorker());
 			this->undoTimer = (gcnew System::Windows::Forms::Timer(this->components));
-			this->tabSearch = (gcnew System::Windows::Forms::TabPage());
-			this->txtSearch = (gcnew System::Windows::Forms::TextBox());
-			this->btnSearch = (gcnew System::Windows::Forms::Button());
-			this->chkRegex = (gcnew System::Windows::Forms::CheckBox());
-			this->chkCaseSensitive = (gcnew System::Windows::Forms::CheckBox());
-			this->chkWhole = (gcnew System::Windows::Forms::CheckBox());
-			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
-			this->listView1 = (gcnew System::Windows::Forms::ListView());
-			this->splitSearch = (gcnew System::Windows::Forms::SplitContainer());
-			this->colSearchID = (gcnew System::Windows::Forms::ColumnHeader());
-			this->colSearchDLL = (gcnew System::Windows::Forms::ColumnHeader());
-			this->colSearchLocal = (gcnew System::Windows::Forms::ColumnHeader());
-			this->colSearchType = (gcnew System::Windows::Forms::ColumnHeader());
-			this->colSearchContent = (gcnew System::Windows::Forms::ColumnHeader());
-			this->lblSearchInput = (gcnew System::Windows::Forms::Label());
 			this->backgroundWorkerSearch = (gcnew System::ComponentModel::BackgroundWorker());
 			this->mainTab->SuspendLayout();
 			this->tabSettings->SuspendLayout();
@@ -259,10 +263,10 @@ private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
 			this->tableLayoutPanel1->SuspendLayout();
 			this->toolsEntry->SuspendLayout();
 			this->tabSearch->SuspendLayout();
-			this->flowLayoutPanel1->SuspendLayout();
 			this->splitSearch->Panel1->SuspendLayout();
 			this->splitSearch->Panel2->SuspendLayout();
 			this->splitSearch->SuspendLayout();
+			this->flowLayoutPanel1->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// mainTab
@@ -826,6 +830,164 @@ private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
 			this->txtEntry->TabIndex = 2;
 			this->txtEntry->TextChanged += gcnew System::EventHandler(this, &Main::txtEntry_TextChanged);
 			// 
+			// tabSearch
+			// 
+			this->tabSearch->BackColor = System::Drawing::SystemColors::Control;
+			this->tabSearch->Controls->Add(this->lstSearch);
+			this->tabSearch->Controls->Add(this->splitSearch);
+			this->tabSearch->Location = System::Drawing::Point(4, 22);
+			this->tabSearch->Margin = System::Windows::Forms::Padding(0);
+			this->tabSearch->Name = L"tabSearch";
+			this->tabSearch->Padding = System::Windows::Forms::Padding(3);
+			this->tabSearch->Size = System::Drawing::Size(776, 536);
+			this->tabSearch->TabIndex = 2;
+			this->tabSearch->Text = L"Search";
+			// 
+			// lstSearch
+			// 
+			this->lstSearch->Activation = System::Windows::Forms::ItemActivation::TwoClick;
+			this->lstSearch->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->lstSearch->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(5) {this->colSearchID, this->colSearchDLL, 
+				this->colSearchLocal, this->colSearchType, this->colSearchContent});
+			this->lstSearch->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->lstSearch->FullRowSelect = true;
+			this->lstSearch->GridLines = true;
+			this->lstSearch->Location = System::Drawing::Point(3, 61);
+			this->lstSearch->MultiSelect = false;
+			this->lstSearch->Name = L"lstSearch";
+			this->lstSearch->Size = System::Drawing::Size(770, 472);
+			this->lstSearch->TabIndex = 6;
+			this->lstSearch->UseCompatibleStateImageBehavior = false;
+			this->lstSearch->View = System::Windows::Forms::View::Details;
+			// 
+			// colSearchID
+			// 
+			this->colSearchID->Text = L"ID";
+			// 
+			// colSearchDLL
+			// 
+			this->colSearchDLL->Text = L"DLL";
+			this->colSearchDLL->Width = 79;
+			// 
+			// colSearchLocal
+			// 
+			this->colSearchLocal->Text = L"Local ID";
+			// 
+			// colSearchType
+			// 
+			this->colSearchType->Text = L"Type";
+			this->colSearchType->Width = 68;
+			// 
+			// colSearchContent
+			// 
+			this->colSearchContent->Text = L"Content";
+			this->colSearchContent->Width = 502;
+			// 
+			// splitSearch
+			// 
+			this->splitSearch->Dock = System::Windows::Forms::DockStyle::Top;
+			this->splitSearch->Location = System::Drawing::Point(3, 3);
+			this->splitSearch->Name = L"splitSearch";
+			// 
+			// splitSearch.Panel1
+			// 
+			this->splitSearch->Panel1->Controls->Add(this->txtSearch);
+			this->splitSearch->Panel1MinSize = 300;
+			// 
+			// splitSearch.Panel2
+			// 
+			this->splitSearch->Panel2->Controls->Add(this->flowLayoutPanel1);
+			this->splitSearch->Size = System::Drawing::Size(770, 58);
+			this->splitSearch->SplitterDistance = 327;
+			this->splitSearch->TabIndex = 7;
+			// 
+			// txtSearch
+			// 
+			this->txtSearch->AcceptsReturn = true;
+			this->txtSearch->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->txtSearch->Location = System::Drawing::Point(0, 0);
+			this->txtSearch->Multiline = true;
+			this->txtSearch->Name = L"txtSearch";
+			this->txtSearch->Size = System::Drawing::Size(327, 58);
+			this->txtSearch->TabIndex = 0;
+			this->txtSearch->TextChanged += gcnew System::EventHandler(this, &Main::txtSearch_TextChanged);
+			this->txtSearch->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &Main::txtSearch_KeyDown);
+			this->txtSearch->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &Main::txtSearch_KeyPress);
+			// 
+			// flowLayoutPanel1
+			// 
+			this->flowLayoutPanel1->AutoSize = true;
+			this->flowLayoutPanel1->Controls->Add(this->chkRegex);
+			this->flowLayoutPanel1->Controls->Add(this->chkCaseSensitive);
+			this->flowLayoutPanel1->Controls->Add(this->chkWhole);
+			this->flowLayoutPanel1->Controls->Add(this->btnSearch);
+			this->flowLayoutPanel1->Controls->Add(this->txtRegexTest);
+			this->flowLayoutPanel1->Controls->Add(this->lblSearchInput);
+			this->flowLayoutPanel1->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->flowLayoutPanel1->Location = System::Drawing::Point(0, 0);
+			this->flowLayoutPanel1->Margin = System::Windows::Forms::Padding(0);
+			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
+			this->flowLayoutPanel1->Size = System::Drawing::Size(439, 58);
+			this->flowLayoutPanel1->TabIndex = 5;
+			// 
+			// chkRegex
+			// 
+			this->chkRegex->Location = System::Drawing::Point(3, 3);
+			this->chkRegex->Name = L"chkRegex";
+			this->chkRegex->Size = System::Drawing::Size(144, 23);
+			this->chkRegex->TabIndex = 2;
+			this->chkRegex->Text = L"Use Regular Expressions";
+			this->chkRegex->UseVisualStyleBackColor = true;
+			this->chkRegex->CheckedChanged += gcnew System::EventHandler(this, &Main::chkRegex_CheckedChanged);
+			// 
+			// chkCaseSensitive
+			// 
+			this->chkCaseSensitive->Location = System::Drawing::Point(153, 3);
+			this->chkCaseSensitive->Name = L"chkCaseSensitive";
+			this->chkCaseSensitive->Size = System::Drawing::Size(96, 23);
+			this->chkCaseSensitive->TabIndex = 3;
+			this->chkCaseSensitive->Text = L"Case Sensitive";
+			this->chkCaseSensitive->UseVisualStyleBackColor = true;
+			// 
+			// chkWhole
+			// 
+			this->chkWhole->Location = System::Drawing::Point(255, 3);
+			this->chkWhole->Name = L"chkWhole";
+			this->chkWhole->Size = System::Drawing::Size(92, 23);
+			this->chkWhole->TabIndex = 4;
+			this->chkWhole->Text = L"Whole Strings";
+			this->chkWhole->UseVisualStyleBackColor = true;
+			// 
+			// btnSearch
+			// 
+			this->btnSearch->Enabled = false;
+			this->btnSearch->Location = System::Drawing::Point(353, 3);
+			this->btnSearch->Name = L"btnSearch";
+			this->btnSearch->Size = System::Drawing::Size(75, 23);
+			this->btnSearch->TabIndex = 1;
+			this->btnSearch->Text = L"Search";
+			this->btnSearch->UseVisualStyleBackColor = true;
+			this->btnSearch->Click += gcnew System::EventHandler(this, &Main::btnSearch_Click);
+			// 
+			// txtRegexTest
+			// 
+			this->txtRegexTest->Location = System::Drawing::Point(3, 32);
+			this->txtRegexTest->Name = L"txtRegexTest";
+			this->txtRegexTest->Size = System::Drawing::Size(100, 20);
+			this->txtRegexTest->TabIndex = 6;
+			this->txtRegexTest->Visible = false;
+			this->txtRegexTest->TextChanged += gcnew System::EventHandler(this, &Main::txtRegexTest_TextChanged);
+			// 
+			// lblSearchInput
+			// 
+			this->lblSearchInput->AutoSize = true;
+			this->lblSearchInput->Location = System::Drawing::Point(109, 29);
+			this->lblSearchInput->MinimumSize = System::Drawing::Size(0, 23);
+			this->lblSearchInput->Name = L"lblSearchInput";
+			this->lblSearchInput->Size = System::Drawing::Size(0, 23);
+			this->lblSearchInput->TabIndex = 5;
+			this->lblSearchInput->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
+			// 
 			// openFLINI
 			// 
 			this->openFLINI->DefaultExt = L"ini";
@@ -852,153 +1014,13 @@ private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
 			this->undoTimer->Interval = 2000;
 			this->undoTimer->Tick += gcnew System::EventHandler(this, &Main::undoTimer_Tick);
 			// 
-			// tabSearch
-			// 
-			this->tabSearch->BackColor = System::Drawing::SystemColors::Control;
-			this->tabSearch->Controls->Add(this->listView1);
-			this->tabSearch->Controls->Add(this->splitSearch);
-			this->tabSearch->Location = System::Drawing::Point(4, 22);
-			this->tabSearch->Margin = System::Windows::Forms::Padding(0);
-			this->tabSearch->Name = L"tabSearch";
-			this->tabSearch->Padding = System::Windows::Forms::Padding(3);
-			this->tabSearch->Size = System::Drawing::Size(776, 536);
-			this->tabSearch->TabIndex = 2;
-			this->tabSearch->Text = L"Search";
-			// 
-			// txtSearch
-			// 
-			this->txtSearch->AcceptsReturn = true;
-			this->txtSearch->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->txtSearch->Location = System::Drawing::Point(0, 0);
-			this->txtSearch->Multiline = true;
-			this->txtSearch->Name = L"txtSearch";
-			this->txtSearch->Size = System::Drawing::Size(327, 46);
-			this->txtSearch->TabIndex = 0;
-			// 
-			// btnSearch
-			// 
-			this->btnSearch->Location = System::Drawing::Point(353, 3);
-			this->btnSearch->Name = L"btnSearch";
-			this->btnSearch->Size = System::Drawing::Size(75, 23);
-			this->btnSearch->TabIndex = 1;
-			this->btnSearch->Text = L"Search";
-			this->btnSearch->UseVisualStyleBackColor = true;
-			// 
-			// chkRegex
-			// 
-			this->chkRegex->AutoSize = true;
-			this->chkRegex->Location = System::Drawing::Point(3, 3);
-			this->chkRegex->Name = L"chkRegex";
-			this->chkRegex->Size = System::Drawing::Size(144, 17);
-			this->chkRegex->TabIndex = 2;
-			this->chkRegex->Text = L"Use Regular Expressions";
-			this->chkRegex->UseVisualStyleBackColor = true;
-			// 
-			// chkCaseSensitive
-			// 
-			this->chkCaseSensitive->AutoSize = true;
-			this->chkCaseSensitive->Location = System::Drawing::Point(153, 3);
-			this->chkCaseSensitive->Name = L"chkCaseSensitive";
-			this->chkCaseSensitive->Size = System::Drawing::Size(96, 17);
-			this->chkCaseSensitive->TabIndex = 3;
-			this->chkCaseSensitive->Text = L"Case Sensitive";
-			this->chkCaseSensitive->UseVisualStyleBackColor = true;
-			// 
-			// chkWhole
-			// 
-			this->chkWhole->AutoSize = true;
-			this->chkWhole->Location = System::Drawing::Point(255, 3);
-			this->chkWhole->Name = L"chkWhole";
-			this->chkWhole->Size = System::Drawing::Size(92, 17);
-			this->chkWhole->TabIndex = 4;
-			this->chkWhole->Text = L"Whole Strings";
-			this->chkWhole->UseVisualStyleBackColor = true;
-			// 
-			// flowLayoutPanel1
-			// 
-			this->flowLayoutPanel1->AutoSize = true;
-			this->flowLayoutPanel1->Controls->Add(this->chkRegex);
-			this->flowLayoutPanel1->Controls->Add(this->chkCaseSensitive);
-			this->flowLayoutPanel1->Controls->Add(this->chkWhole);
-			this->flowLayoutPanel1->Controls->Add(this->btnSearch);
-			this->flowLayoutPanel1->Controls->Add(this->lblSearchInput);
-			this->flowLayoutPanel1->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->flowLayoutPanel1->Location = System::Drawing::Point(0, 0);
-			this->flowLayoutPanel1->Margin = System::Windows::Forms::Padding(0);
-			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
-			this->flowLayoutPanel1->Size = System::Drawing::Size(439, 46);
-			this->flowLayoutPanel1->TabIndex = 5;
-			// 
-			// listView1
-			// 
-			this->listView1->Activation = System::Windows::Forms::ItemActivation::TwoClick;
-			this->listView1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
-			this->listView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(5) {this->colSearchID, this->colSearchDLL, 
-				this->colSearchLocal, this->colSearchType, this->colSearchContent});
-			this->listView1->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->listView1->FullRowSelect = true;
-			this->listView1->GridLines = true;
-			this->listView1->Location = System::Drawing::Point(3, 49);
-			this->listView1->MultiSelect = false;
-			this->listView1->Name = L"listView1";
-			this->listView1->Size = System::Drawing::Size(770, 484);
-			this->listView1->TabIndex = 6;
-			this->listView1->UseCompatibleStateImageBehavior = false;
-			this->listView1->View = System::Windows::Forms::View::Details;
-			// 
-			// splitSearch
-			// 
-			this->splitSearch->Dock = System::Windows::Forms::DockStyle::Top;
-			this->splitSearch->Location = System::Drawing::Point(3, 3);
-			this->splitSearch->Name = L"splitSearch";
-			// 
-			// splitSearch.Panel1
-			// 
-			this->splitSearch->Panel1->Controls->Add(this->txtSearch);
-			this->splitSearch->Panel1MinSize = 300;
-			// 
-			// splitSearch.Panel2
-			// 
-			this->splitSearch->Panel2->Controls->Add(this->flowLayoutPanel1);
-			this->splitSearch->Size = System::Drawing::Size(770, 46);
-			this->splitSearch->SplitterDistance = 327;
-			this->splitSearch->TabIndex = 7;
-			// 
-			// colSearchID
-			// 
-			this->colSearchID->Text = L"ID";
-			// 
-			// colSearchDLL
-			// 
-			this->colSearchDLL->Text = L"DLL";
-			this->colSearchDLL->Width = 79;
-			// 
-			// colSearchLocal
-			// 
-			this->colSearchLocal->Text = L"Local ID";
-			// 
-			// colSearchType
-			// 
-			this->colSearchType->Text = L"Type";
-			this->colSearchType->Width = 68;
-			// 
-			// colSearchContent
-			// 
-			this->colSearchContent->Text = L"Content";
-			this->colSearchContent->Width = 502;
-			// 
-			// lblSearchInput
-			// 
-			this->lblSearchInput->AutoSize = true;
-			this->lblSearchInput->Location = System::Drawing::Point(434, 0);
-			this->lblSearchInput->Name = L"lblSearchInput";
-			this->lblSearchInput->Size = System::Drawing::Size(0, 13);
-			this->lblSearchInput->TabIndex = 5;
-			// 
 			// backgroundWorkerSearch
 			// 
 			this->backgroundWorkerSearch->WorkerReportsProgress = true;
 			this->backgroundWorkerSearch->WorkerSupportsCancellation = true;
+			this->backgroundWorkerSearch->DoWork += gcnew System::ComponentModel::DoWorkEventHandler(this, &Main::backgroundWorkerSearch_DoWork);
+			this->backgroundWorkerSearch->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Main::backgroundWorkerSearch_RunWorkerCompleted);
+			this->backgroundWorkerSearch->ProgressChanged += gcnew System::ComponentModel::ProgressChangedEventHandler(this, &Main::backgroundWorkerSearch_ProgressChanged);
 			// 
 			// Main
 			// 
@@ -1030,13 +1052,13 @@ private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
 			this->toolsEntry->ResumeLayout(false);
 			this->toolsEntry->PerformLayout();
 			this->tabSearch->ResumeLayout(false);
-			this->flowLayoutPanel1->ResumeLayout(false);
-			this->flowLayoutPanel1->PerformLayout();
 			this->splitSearch->Panel1->ResumeLayout(false);
 			this->splitSearch->Panel1->PerformLayout();
 			this->splitSearch->Panel2->ResumeLayout(false);
 			this->splitSearch->Panel2->PerformLayout();
 			this->splitSearch->ResumeLayout(false);
+			this->flowLayoutPanel1->ResumeLayout(false);
+			this->flowLayoutPanel1->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -1221,6 +1243,138 @@ private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
 			 }
 private: System::Void entrySave_Click(System::Object^  sender, System::EventArgs^  e) {
 				addUndo();
+		 }
+private: System::Void txtSearch_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				checkRegex();
+		 }
+private: System::Void chkRegex_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+				bool regValid = false;
+				if(chkRegex->Checked) {
+					regValid = checkRegex();
+					chkCaseSensitive->Enabled = false;
+					chkWhole->Enabled = false;
+				} else {
+					lblSearchInput->Text = "";
+					chkCaseSensitive->Enabled = true;
+					chkWhole->Enabled = true;
+				}
+				if(regValid) {
+					txtRegexTest->Text = "Test regex here!";
+					txtRegexTest->Visible = true;
+				} else
+					txtRegexTest->Visible = false;
+		 }
+		 
+		 bool checkRegex() {
+			if(chkRegex->Checked) {
+				try {
+					if(txtSearch->Text->Length == 0) throw gcnew ArgumentException("No expression.");
+					Regex^ r = gcnew Regex(txtSearch->Text);
+					
+					lblSearchInput->ForeColor = Color::DarkGreen;
+					lblSearchInput->Text = "Regex OK!";
+					
+					if(!txtRegexTest->Visible)
+						txtRegexTest->Text = "Test regex here!";
+					txtRegexTest->Visible = true;
+					
+					return true;
+				} catch(ArgumentException^ e) {
+					lblSearchInput->ForeColor = Color::DarkRed;
+					lblSearchInput->Text = "Parse error: " + e->Message;
+					
+					txtRegexTest->Visible = false;
+					
+					return false;
+				}
+			}
+			return false;
+		}
+private: System::Void txtRegexTest_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+			if(checkRegex() && txtRegexTest->Text != "Test regex here!") {
+				Regex^ r = gcnew Regex(txtSearch->Text);
+				MatchCollection^ mc = r->Matches(txtRegexTest->Text);
+				lblSearchInput->Text = mc->Count + " match" + (mc->Count == 1 ? "" : "es") + " found.";
+			}
+		 }
+private: System::Void txtSearch_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+			if(e->Control && e->KeyCode == Keys::Enter) {
+				if(backgroundWorkerSearch->IsBusy)
+					cancelSearch();
+				beginSearch();
+				e->Handled = true;
+			}
+		 }
+private: System::Void btnSearch_Click(System::Object^  sender, System::EventArgs^  e) {
+			if(backgroundWorkerSearch->IsBusy)
+				cancelSearch();
+			else
+				beginSearch();
+		 }
+		 
+		void beginSearch() {
+			mainStatus->addStatusText("Search in progress", -1, true, true);
+			lstSearch->Items->Clear();
+			lstSearch->BeginUpdate();
+			backgroundWorkerSearch->RunWorkerAsync(gcnew SearchRequest(txtSearch->Text, chkRegex->Checked, chkCaseSensitive->Checked, chkWhole->Checked));
+		}
+		
+		void cancelSearch() {
+			mainStatus->removeStatusText("Search in progress");
+			mainStatus->addStatusText("Search cancelled", 5, false, true);
+			backgroundWorkerSearch->CancelAsync();
+		}
+		 
+		 void testEntry(IDSItem^ eN, BackgroundWorker^ bw, SearchRequest^ sr, Regex^ r, int a, DLLInterface^ dll, bool infocard) {
+			if(eN->text != "") {
+				if(sr->Regex) {
+					if(r->IsMatch(eN->text))
+						bw->ReportProgress(a % 100, gcnew SearchResult(eN, infocard, a, dll));
+				} else {
+					if(sr->WholeStrings && eN->text->Equals(sr->Query, sr->CaseSensitive ? StringComparison::InvariantCulture : StringComparison::InvariantCultureIgnoreCase))
+						bw->ReportProgress(0, gcnew SearchResult(eN, infocard, a, dll));
+					else if(!sr->WholeStrings && eN->text->IndexOf(sr->Query, sr->CaseSensitive ? StringComparison::InvariantCulture : StringComparison::InvariantCultureIgnoreCase) != -1)
+						bw->ReportProgress(0, gcnew SearchResult(eN, infocard, a, dll));
+				}
+			}
+		 }
+		 
+private: System::Void backgroundWorkerSearch_DoWork(System::Object^  sender, System::ComponentModel::DoWorkEventArgs^  e) {
+				BackgroundWorker^ bw = (BackgroundWorker^) sender;
+				SearchRequest^ sr = (SearchRequest^) e->Argument;
+				Regex^ r;
+				if(sr->Regex) r = gcnew Regex(sr->Query);
+				for each(DLLInterface^ d in dlls) {
+					if(d->Loaded) {
+						for(int a = 0; a < 0x10000; a++) {
+							IDSItem^ eN = d->ObjL[a, false], ^ eI = d->ObjL[a, true];
+							testEntry(eN, bw, sr, r, a, d, false);
+							testEntry(eI, bw, sr, r, a, d, true);
+						}
+					}
+				}
+		 }
+private: System::Void backgroundWorkerSearch_ProgressChanged(System::Object^  sender, System::ComponentModel::ProgressChangedEventArgs^  e) {
+			SearchResult^ sr = (SearchResult^) e->UserState;
+			
+			ListViewItem^ i = gcnew ListViewItem("" + (sr->Index + sr->ID * 0x10000));
+			i->SubItems->Add(sr->DllName);
+			i->SubItems->Add("" + sr->Index);
+			i->SubItems->Add(sr->Infocard ? "Infocard" : "Name");
+			i->SubItems->Add(SimpleInfocards::StripTags(sr->Item->text));
+			lstSearch->Items->Add(i);
+			
+			if(e->ProgressPercentage == 0) lstSearch->Update();
+		 }
+private: System::Void backgroundWorkerSearch_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
+			lstSearch->EndUpdate();
+			mainStatus->removeStatusText("Search in progress");
+			mainStatus->addStatusText("Search completed", 5, false, true);
+		 }
+private: System::Void txtSearch_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
+			if(e->KeyChar == (wchar_t) 0xa) {
+				e->Handled = true;
+			}
 		 }
 };
 }
