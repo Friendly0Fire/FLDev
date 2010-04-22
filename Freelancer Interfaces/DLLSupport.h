@@ -38,6 +38,11 @@ namespace Interfaces
 					else return false;
 				}
 			}
+			property String^ Original {
+				String^ get() {
+					return org;
+				}
+			}
 
 			void Undo();
 			void Redo();
@@ -45,6 +50,7 @@ namespace Interfaces
 			int canUndo();
 			void Update();
 			void Revert();
+			void Revert(bool clear);
 		private:
 			String^ txt, ^ org;
 			Stack<String^>^ undo, ^ redo;

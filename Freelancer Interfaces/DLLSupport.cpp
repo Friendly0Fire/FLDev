@@ -824,8 +824,13 @@ void IDSItem::Update() {
 	redo->Clear();
 	org = (String^) txt->Clone();
 }
-void IDSItem::Revert() {
-	undo->Clear();
-	redo->Clear();
+void IDSItem::Revert(bool clear) {
+	if(clear) {
+		undo->Clear();
+		redo->Clear();
+	}
 	txt = (String^) org->Clone();
+}
+void IDSItem::Revert() {
+	Revert(true);
 }
