@@ -789,7 +789,10 @@ String^ SimpleInfocards::dec2Bin(int i) {
 }
 
 String^ SimpleInfocards::StripTags(String^ content) {
-	return Regex::Replace(content,  "<[^>]+>", " ");
+	content = Regex::Replace(content,  "<[^>]+>", " ");
+	content = content->Replace("&gt;", ">");
+	content = content->Replace("&lt;", "<");
+	return content;
 }
 
 IDSItem::IDSItem(String^ value) {

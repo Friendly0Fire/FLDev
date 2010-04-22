@@ -193,7 +193,7 @@ namespace Interfaces
 		static String^ dec2Bin(int i);
 	};
 
-	public ref class DLLManager : ProcessingClass {
+	public ref class DLLManager : ProcessingClass, Collections::IEnumerable {
 		public:
 			DLLManager( array<String ^> ^ dllpaths );
 			void mApply();
@@ -226,6 +226,10 @@ namespace Interfaces
 				DLLInterface^ get(int id) {
 					return dlls[id];
 				}
+			}
+			
+			virtual Collections::IEnumerator^ GetEnumerator() {
+				return dlls->GetEnumerator();
 			}
 		private:
 			array<DLLInterface ^> ^ dlls;

@@ -187,6 +187,10 @@
 			AssemblyName="System.Xml, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
+		<ProjectReference
+			ReferencedProjectIdentifier="{2AF2248A-5BA5-4B17-BAC0-C6DA68207B53}"
+			RelativePathToProject=".\Freelancer Interfaces\Freelancer Interfaces.vcproj"
+		/>
 	</References>
 	<Files>
 		<Filter
