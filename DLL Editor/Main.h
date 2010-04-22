@@ -121,7 +121,7 @@ namespace DLLEditor {
 
 
 	private: System::Windows::Forms::ComboBox^  comboIDS;
-	private: System::Windows::Forms::ToolStrip^  toolsEntry;
+
 	private: System::Windows::Forms::RadioButton^  radioSInfocard;
 	private: System::Windows::Forms::Label^  lblIDSInfo;
 
@@ -129,8 +129,33 @@ namespace DLLEditor {
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::TextBox^  txtLocalIDS;
 	private: System::Windows::Forms::Timer^  undoTimer;
-	private: System::Windows::Forms::ToolStripButton^  entryUndo;
-	private: System::Windows::Forms::ToolStripButton^  entryRedo;
+private: System::Windows::Forms::ToolStrip^  toolsEntry;
+private: System::Windows::Forms::ToolStripButton^  entrySuperundo;
+private: System::Windows::Forms::ToolStripButton^  entryUndo;
+private: System::Windows::Forms::ToolStripButton^  entryRedo;
+private: System::Windows::Forms::ToolStripButton^  entrySave;
+private: System::Windows::Forms::TabPage^  tabSearch;
+private: System::Windows::Forms::CheckBox^  chkWhole;
+private: System::Windows::Forms::CheckBox^  chkCaseSensitive;
+private: System::Windows::Forms::CheckBox^  chkRegex;
+private: System::Windows::Forms::Button^  btnSearch;
+private: System::Windows::Forms::TextBox^  txtSearch;
+private: System::Windows::Forms::ListView^  listView1;
+private: System::Windows::Forms::FlowLayoutPanel^  flowLayoutPanel1;
+private: System::Windows::Forms::SplitContainer^  splitSearch;
+private: System::Windows::Forms::ColumnHeader^  colSearchID;
+private: System::Windows::Forms::ColumnHeader^  colSearchDLL;
+private: System::Windows::Forms::ColumnHeader^  colSearchLocal;
+private: System::Windows::Forms::ColumnHeader^  colSearchType;
+private: System::Windows::Forms::ColumnHeader^  colSearchContent;
+private: System::Windows::Forms::Label^  lblSearchInput;
+private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
+
+
+
+
+
+
 	private: System::ComponentModel::IContainer^  components;
 
 
@@ -190,19 +215,37 @@ namespace DLLEditor {
 			this->comboIDS = (gcnew System::Windows::Forms::ComboBox());
 			this->radioName = (gcnew System::Windows::Forms::RadioButton());
 			this->radioInfocard = (gcnew System::Windows::Forms::RadioButton());
-			this->txtEntry = (gcnew System::Windows::Forms::TextBox());
-			this->toolsEntry = (gcnew System::Windows::Forms::ToolStrip());
-			this->entryUndo = (gcnew System::Windows::Forms::ToolStripButton());
-			this->entryRedo = (gcnew System::Windows::Forms::ToolStripButton());
 			this->lblIDSInfo = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->txtLocalIDS = (gcnew System::Windows::Forms::TextBox());
+			this->toolsEntry = (gcnew System::Windows::Forms::ToolStrip());
+			this->entrySuperundo = (gcnew System::Windows::Forms::ToolStripButton());
+			this->entryUndo = (gcnew System::Windows::Forms::ToolStripButton());
+			this->entryRedo = (gcnew System::Windows::Forms::ToolStripButton());
+			this->entrySave = (gcnew System::Windows::Forms::ToolStripButton());
+			this->txtEntry = (gcnew System::Windows::Forms::TextBox());
 			this->helpProvider = (gcnew System::Windows::Forms::HelpProvider());
 			this->openFLINI = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->openDLL = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->backgroundWorkerFLINI = (gcnew System::ComponentModel::BackgroundWorker());
 			this->backgroundWorkerApply = (gcnew System::ComponentModel::BackgroundWorker());
 			this->undoTimer = (gcnew System::Windows::Forms::Timer(this->components));
+			this->tabSearch = (gcnew System::Windows::Forms::TabPage());
+			this->txtSearch = (gcnew System::Windows::Forms::TextBox());
+			this->btnSearch = (gcnew System::Windows::Forms::Button());
+			this->chkRegex = (gcnew System::Windows::Forms::CheckBox());
+			this->chkCaseSensitive = (gcnew System::Windows::Forms::CheckBox());
+			this->chkWhole = (gcnew System::Windows::Forms::CheckBox());
+			this->flowLayoutPanel1 = (gcnew System::Windows::Forms::FlowLayoutPanel());
+			this->listView1 = (gcnew System::Windows::Forms::ListView());
+			this->splitSearch = (gcnew System::Windows::Forms::SplitContainer());
+			this->colSearchID = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colSearchDLL = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colSearchLocal = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colSearchType = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colSearchContent = (gcnew System::Windows::Forms::ColumnHeader());
+			this->lblSearchInput = (gcnew System::Windows::Forms::Label());
+			this->backgroundWorkerSearch = (gcnew System::ComponentModel::BackgroundWorker());
 			this->mainTab->SuspendLayout();
 			this->tabSettings->SuspendLayout();
 			this->grpOut->SuspendLayout();
@@ -215,12 +258,18 @@ namespace DLLEditor {
 			this->grpDLLExplorer->SuspendLayout();
 			this->tableLayoutPanel1->SuspendLayout();
 			this->toolsEntry->SuspendLayout();
+			this->tabSearch->SuspendLayout();
+			this->flowLayoutPanel1->SuspendLayout();
+			this->splitSearch->Panel1->SuspendLayout();
+			this->splitSearch->Panel2->SuspendLayout();
+			this->splitSearch->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// mainTab
 			// 
 			this->mainTab->Controls->Add(this->tabSettings);
 			this->mainTab->Controls->Add(this->editTab);
+			this->mainTab->Controls->Add(this->tabSearch);
 			this->mainTab->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->mainTab->Location = System::Drawing::Point(0, 0);
 			this->mainTab->Name = L"mainTab";
@@ -594,11 +643,11 @@ namespace DLLEditor {
 			this->tableLayoutPanel1->Controls->Add(this->comboIDS, 0, 0);
 			this->tableLayoutPanel1->Controls->Add(this->radioName, 0, 1);
 			this->tableLayoutPanel1->Controls->Add(this->radioInfocard, 1, 1);
-			this->tableLayoutPanel1->Controls->Add(this->txtEntry, 0, 3);
-			this->tableLayoutPanel1->Controls->Add(this->toolsEntry, 0, 2);
 			this->tableLayoutPanel1->Controls->Add(this->lblIDSInfo, 0, 4);
 			this->tableLayoutPanel1->Controls->Add(this->label3, 1, 4);
 			this->tableLayoutPanel1->Controls->Add(this->txtLocalIDS, 2, 4);
+			this->tableLayoutPanel1->Controls->Add(this->toolsEntry, 0, 2);
+			this->tableLayoutPanel1->Controls->Add(this->txtEntry, 0, 3);
 			this->tableLayoutPanel1->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->tableLayoutPanel1->Location = System::Drawing::Point(0, 0);
 			this->tableLayoutPanel1->Name = L"tableLayoutPanel1";
@@ -672,56 +721,6 @@ namespace DLLEditor {
 			this->radioInfocard->UseVisualStyleBackColor = true;
 			this->radioInfocard->MouseClick += gcnew System::Windows::Forms::MouseEventHandler(this, &Main::radioInfocard_MouseClick);
 			// 
-			// txtEntry
-			// 
-			this->txtEntry->AcceptsTab = true;
-			this->tableLayoutPanel1->SetColumnSpan(this->txtEntry, 3);
-			this->txtEntry->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->txtEntry->Location = System::Drawing::Point(10, 80);
-			this->txtEntry->Margin = System::Windows::Forms::Padding(10, 0, 10, 10);
-			this->txtEntry->MaxLength = 65536;
-			this->txtEntry->Multiline = true;
-			this->txtEntry->Name = L"txtEntry";
-			this->txtEntry->ScrollBars = System::Windows::Forms::ScrollBars::Both;
-			this->txtEntry->Size = System::Drawing::Size(488, 412);
-			this->txtEntry->TabIndex = 2;
-			this->txtEntry->TextChanged += gcnew System::EventHandler(this, &Main::txtEntry_TextChanged);
-			// 
-			// toolsEntry
-			// 
-			this->tableLayoutPanel1->SetColumnSpan(this->toolsEntry, 3);
-			this->toolsEntry->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
-			this->toolsEntry->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->entryUndo, this->entryRedo});
-			this->toolsEntry->Location = System::Drawing::Point(10, 55);
-			this->toolsEntry->Margin = System::Windows::Forms::Padding(10, 0, 10, 0);
-			this->toolsEntry->Name = L"toolsEntry";
-			this->toolsEntry->RenderMode = System::Windows::Forms::ToolStripRenderMode::System;
-			this->toolsEntry->Size = System::Drawing::Size(488, 25);
-			this->toolsEntry->TabIndex = 5;
-			this->toolsEntry->Text = L"toolStrip1";
-			// 
-			// entryUndo
-			// 
-			this->entryUndo->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
-			this->entryUndo->Enabled = false;
-			this->entryUndo->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"entryUndo.Image")));
-			this->entryUndo->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->entryUndo->Name = L"entryUndo";
-			this->entryUndo->Size = System::Drawing::Size(23, 22);
-			this->entryUndo->Text = L"toolStripButton1";
-			this->entryUndo->Click += gcnew System::EventHandler(this, &Main::entryUndo_Click);
-			// 
-			// entryRedo
-			// 
-			this->entryRedo->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
-			this->entryRedo->Enabled = false;
-			this->entryRedo->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"entryRedo.Image")));
-			this->entryRedo->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->entryRedo->Name = L"entryRedo";
-			this->entryRedo->Size = System::Drawing::Size(23, 22);
-			this->entryRedo->Text = L"toolStripButton1";
-			this->entryRedo->Click += gcnew System::EventHandler(this, &Main::entryRedo_Click);
-			// 
 			// lblIDSInfo
 			// 
 			this->lblIDSInfo->AutoSize = true;
@@ -752,6 +751,81 @@ namespace DLLEditor {
 			this->txtLocalIDS->TabIndex = 10;
 			this->txtLocalIDS->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &Main::txtLocalIDS_KeyUp);
 			// 
+			// toolsEntry
+			// 
+			this->toolsEntry->AllowMerge = false;
+			this->tableLayoutPanel1->SetColumnSpan(this->toolsEntry, 3);
+			this->toolsEntry->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->toolsEntry->GripStyle = System::Windows::Forms::ToolStripGripStyle::Hidden;
+			this->toolsEntry->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->entrySuperundo, this->entryUndo, 
+				this->entryRedo, this->entrySave});
+			this->toolsEntry->Location = System::Drawing::Point(10, 55);
+			this->toolsEntry->Margin = System::Windows::Forms::Padding(10, 0, 10, 0);
+			this->toolsEntry->Name = L"toolsEntry";
+			this->toolsEntry->RenderMode = System::Windows::Forms::ToolStripRenderMode::System;
+			this->toolsEntry->Size = System::Drawing::Size(488, 25);
+			this->toolsEntry->Stretch = true;
+			this->toolsEntry->TabIndex = 5;
+			this->toolsEntry->Text = L"Entry Tools";
+			// 
+			// entrySuperundo
+			// 
+			this->entrySuperundo->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->entrySuperundo->Enabled = false;
+			this->entrySuperundo->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"entrySuperundo.Image")));
+			this->entrySuperundo->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->entrySuperundo->Name = L"entrySuperundo";
+			this->entrySuperundo->Size = System::Drawing::Size(23, 22);
+			this->entrySuperundo->Text = L"Super Undo";
+			this->entrySuperundo->Click += gcnew System::EventHandler(this, &Main::entrySuperundo_Click);
+			// 
+			// entryUndo
+			// 
+			this->entryUndo->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->entryUndo->Enabled = false;
+			this->entryUndo->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"entryUndo.Image")));
+			this->entryUndo->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->entryUndo->Name = L"entryUndo";
+			this->entryUndo->Size = System::Drawing::Size(23, 22);
+			this->entryUndo->Text = L"Undo";
+			this->entryUndo->Click += gcnew System::EventHandler(this, &Main::entryUndo_Click);
+			// 
+			// entryRedo
+			// 
+			this->entryRedo->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->entryRedo->Enabled = false;
+			this->entryRedo->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"entryRedo.Image")));
+			this->entryRedo->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->entryRedo->Name = L"entryRedo";
+			this->entryRedo->Size = System::Drawing::Size(23, 22);
+			this->entryRedo->Text = L"Redo";
+			this->entryRedo->Click += gcnew System::EventHandler(this, &Main::entryRedo_Click);
+			// 
+			// entrySave
+			// 
+			this->entrySave->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->entrySave->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"entrySave.Image")));
+			this->entrySave->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->entrySave->Name = L"entrySave";
+			this->entrySave->Size = System::Drawing::Size(23, 22);
+			this->entrySave->Text = L"Save";
+			this->entrySave->Click += gcnew System::EventHandler(this, &Main::entrySave_Click);
+			// 
+			// txtEntry
+			// 
+			this->txtEntry->AcceptsTab = true;
+			this->tableLayoutPanel1->SetColumnSpan(this->txtEntry, 3);
+			this->txtEntry->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->txtEntry->Location = System::Drawing::Point(10, 80);
+			this->txtEntry->Margin = System::Windows::Forms::Padding(10, 0, 10, 10);
+			this->txtEntry->MaxLength = 65536;
+			this->txtEntry->Multiline = true;
+			this->txtEntry->Name = L"txtEntry";
+			this->txtEntry->ScrollBars = System::Windows::Forms::ScrollBars::Both;
+			this->txtEntry->Size = System::Drawing::Size(488, 412);
+			this->txtEntry->TabIndex = 2;
+			this->txtEntry->TextChanged += gcnew System::EventHandler(this, &Main::txtEntry_TextChanged);
+			// 
 			// openFLINI
 			// 
 			this->openFLINI->DefaultExt = L"ini";
@@ -777,6 +851,154 @@ namespace DLLEditor {
 			// 
 			this->undoTimer->Interval = 2000;
 			this->undoTimer->Tick += gcnew System::EventHandler(this, &Main::undoTimer_Tick);
+			// 
+			// tabSearch
+			// 
+			this->tabSearch->BackColor = System::Drawing::SystemColors::Control;
+			this->tabSearch->Controls->Add(this->listView1);
+			this->tabSearch->Controls->Add(this->splitSearch);
+			this->tabSearch->Location = System::Drawing::Point(4, 22);
+			this->tabSearch->Margin = System::Windows::Forms::Padding(0);
+			this->tabSearch->Name = L"tabSearch";
+			this->tabSearch->Padding = System::Windows::Forms::Padding(3);
+			this->tabSearch->Size = System::Drawing::Size(776, 536);
+			this->tabSearch->TabIndex = 2;
+			this->tabSearch->Text = L"Search";
+			// 
+			// txtSearch
+			// 
+			this->txtSearch->AcceptsReturn = true;
+			this->txtSearch->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->txtSearch->Location = System::Drawing::Point(0, 0);
+			this->txtSearch->Multiline = true;
+			this->txtSearch->Name = L"txtSearch";
+			this->txtSearch->Size = System::Drawing::Size(327, 46);
+			this->txtSearch->TabIndex = 0;
+			// 
+			// btnSearch
+			// 
+			this->btnSearch->Location = System::Drawing::Point(353, 3);
+			this->btnSearch->Name = L"btnSearch";
+			this->btnSearch->Size = System::Drawing::Size(75, 23);
+			this->btnSearch->TabIndex = 1;
+			this->btnSearch->Text = L"Search";
+			this->btnSearch->UseVisualStyleBackColor = true;
+			// 
+			// chkRegex
+			// 
+			this->chkRegex->AutoSize = true;
+			this->chkRegex->Location = System::Drawing::Point(3, 3);
+			this->chkRegex->Name = L"chkRegex";
+			this->chkRegex->Size = System::Drawing::Size(144, 17);
+			this->chkRegex->TabIndex = 2;
+			this->chkRegex->Text = L"Use Regular Expressions";
+			this->chkRegex->UseVisualStyleBackColor = true;
+			// 
+			// chkCaseSensitive
+			// 
+			this->chkCaseSensitive->AutoSize = true;
+			this->chkCaseSensitive->Location = System::Drawing::Point(153, 3);
+			this->chkCaseSensitive->Name = L"chkCaseSensitive";
+			this->chkCaseSensitive->Size = System::Drawing::Size(96, 17);
+			this->chkCaseSensitive->TabIndex = 3;
+			this->chkCaseSensitive->Text = L"Case Sensitive";
+			this->chkCaseSensitive->UseVisualStyleBackColor = true;
+			// 
+			// chkWhole
+			// 
+			this->chkWhole->AutoSize = true;
+			this->chkWhole->Location = System::Drawing::Point(255, 3);
+			this->chkWhole->Name = L"chkWhole";
+			this->chkWhole->Size = System::Drawing::Size(92, 17);
+			this->chkWhole->TabIndex = 4;
+			this->chkWhole->Text = L"Whole Strings";
+			this->chkWhole->UseVisualStyleBackColor = true;
+			// 
+			// flowLayoutPanel1
+			// 
+			this->flowLayoutPanel1->AutoSize = true;
+			this->flowLayoutPanel1->Controls->Add(this->chkRegex);
+			this->flowLayoutPanel1->Controls->Add(this->chkCaseSensitive);
+			this->flowLayoutPanel1->Controls->Add(this->chkWhole);
+			this->flowLayoutPanel1->Controls->Add(this->btnSearch);
+			this->flowLayoutPanel1->Controls->Add(this->lblSearchInput);
+			this->flowLayoutPanel1->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->flowLayoutPanel1->Location = System::Drawing::Point(0, 0);
+			this->flowLayoutPanel1->Margin = System::Windows::Forms::Padding(0);
+			this->flowLayoutPanel1->Name = L"flowLayoutPanel1";
+			this->flowLayoutPanel1->Size = System::Drawing::Size(439, 46);
+			this->flowLayoutPanel1->TabIndex = 5;
+			// 
+			// listView1
+			// 
+			this->listView1->Activation = System::Windows::Forms::ItemActivation::TwoClick;
+			this->listView1->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->listView1->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(5) {this->colSearchID, this->colSearchDLL, 
+				this->colSearchLocal, this->colSearchType, this->colSearchContent});
+			this->listView1->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->listView1->FullRowSelect = true;
+			this->listView1->GridLines = true;
+			this->listView1->Location = System::Drawing::Point(3, 49);
+			this->listView1->MultiSelect = false;
+			this->listView1->Name = L"listView1";
+			this->listView1->Size = System::Drawing::Size(770, 484);
+			this->listView1->TabIndex = 6;
+			this->listView1->UseCompatibleStateImageBehavior = false;
+			this->listView1->View = System::Windows::Forms::View::Details;
+			// 
+			// splitSearch
+			// 
+			this->splitSearch->Dock = System::Windows::Forms::DockStyle::Top;
+			this->splitSearch->Location = System::Drawing::Point(3, 3);
+			this->splitSearch->Name = L"splitSearch";
+			// 
+			// splitSearch.Panel1
+			// 
+			this->splitSearch->Panel1->Controls->Add(this->txtSearch);
+			this->splitSearch->Panel1MinSize = 300;
+			// 
+			// splitSearch.Panel2
+			// 
+			this->splitSearch->Panel2->Controls->Add(this->flowLayoutPanel1);
+			this->splitSearch->Size = System::Drawing::Size(770, 46);
+			this->splitSearch->SplitterDistance = 327;
+			this->splitSearch->TabIndex = 7;
+			// 
+			// colSearchID
+			// 
+			this->colSearchID->Text = L"ID";
+			// 
+			// colSearchDLL
+			// 
+			this->colSearchDLL->Text = L"DLL";
+			this->colSearchDLL->Width = 79;
+			// 
+			// colSearchLocal
+			// 
+			this->colSearchLocal->Text = L"Local ID";
+			// 
+			// colSearchType
+			// 
+			this->colSearchType->Text = L"Type";
+			this->colSearchType->Width = 68;
+			// 
+			// colSearchContent
+			// 
+			this->colSearchContent->Text = L"Content";
+			this->colSearchContent->Width = 502;
+			// 
+			// lblSearchInput
+			// 
+			this->lblSearchInput->AutoSize = true;
+			this->lblSearchInput->Location = System::Drawing::Point(434, 0);
+			this->lblSearchInput->Name = L"lblSearchInput";
+			this->lblSearchInput->Size = System::Drawing::Size(0, 13);
+			this->lblSearchInput->TabIndex = 5;
+			// 
+			// backgroundWorkerSearch
+			// 
+			this->backgroundWorkerSearch->WorkerReportsProgress = true;
+			this->backgroundWorkerSearch->WorkerSupportsCancellation = true;
 			// 
 			// Main
 			// 
@@ -807,6 +1029,14 @@ namespace DLLEditor {
 			this->tableLayoutPanel1->PerformLayout();
 			this->toolsEntry->ResumeLayout(false);
 			this->toolsEntry->PerformLayout();
+			this->tabSearch->ResumeLayout(false);
+			this->flowLayoutPanel1->ResumeLayout(false);
+			this->flowLayoutPanel1->PerformLayout();
+			this->splitSearch->Panel1->ResumeLayout(false);
+			this->splitSearch->Panel1->PerformLayout();
+			this->splitSearch->Panel2->ResumeLayout(false);
+			this->splitSearch->Panel2->PerformLayout();
+			this->splitSearch->ResumeLayout(false);
 			this->ResumeLayout(false);
 
 		}
@@ -918,6 +1148,11 @@ namespace DLLEditor {
 					 showNewEntry(ids);
 			 }
 	private: System::Void txtEntry_TextChanged(System::Object^  sender, System::EventArgs^  e) {
+				 if(currentEntry >= 0) {
+					 IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
+					 entrySuperundo->Enabled = (radioSInfocard->Checked ? SimpleInfocards::XMLToSimple(i->Original) : i->Original) != txtEntry->Text;
+				 }
+				 
 				 if(changingSelectedIDS) return;
 
 				 undoTimer->Stop();
@@ -976,5 +1211,16 @@ namespace DLLEditor {
 				 if(changingSelectedIDS) return;
 				 refreshEntry();
 			 }
-	};
+	private: System::Void entrySuperundo_Click(System::Object^  sender, System::EventArgs^  e) {
+				 addUndo();
+				 IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
+				 i->Revert(false);
+				 refreshEntry();
+				 RefreshList(lstScroll->Value, 0);
+				 entrySuperundo->Enabled = false;
+			 }
+private: System::Void entrySave_Click(System::Object^  sender, System::EventArgs^  e) {
+				addUndo();
+		 }
+};
 }

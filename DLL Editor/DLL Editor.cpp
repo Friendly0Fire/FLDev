@@ -236,6 +236,7 @@ void Main::showNewEntry(int id) {
 	IDSItem^ i = dlls->mGetEntryObj(currentEntry, radioInfocard->Checked || radioSInfocard->Checked);
 	entryRedo->Enabled = i->canRedo() > 0 ? true : false;
 	entryUndo->Enabled = i->canUndo() > 0 ? true : false;
+	entrySuperundo->Enabled = (radioSInfocard->Checked ? SimpleInfocards::XMLToSimple(i->Original) : i->Original) != txtEntry->Text;
 	changingSelectedIDS = false;
 }
 
