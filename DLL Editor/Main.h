@@ -187,6 +187,7 @@ private: System::Windows::Forms::TextBox^  txtImportMessage;
 private: System::Windows::Forms::TextBox^  txtExportSpecific;
 private: System::Windows::Forms::RadioButton^  radioExportSpecific;
 private: System::Windows::Forms::Button^  btnImport;
+private: System::Windows::Forms::OpenFileDialog^  openImport;
 
 
 
@@ -306,6 +307,7 @@ private: System::Windows::Forms::Button^  btnImport;
 			this->backgroundWorkerApply = (gcnew System::ComponentModel::BackgroundWorker());
 			this->undoTimer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->backgroundWorkerSearch = (gcnew System::ComponentModel::BackgroundWorker());
+			this->openImport = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->mainTab->SuspendLayout();
 			this->tabSettings->SuspendLayout();
 			this->grpOut->SuspendLayout();
@@ -1170,7 +1172,6 @@ private: System::Windows::Forms::Button^  btnImport;
 			this->txtPathImport->Name = L"txtPathImport";
 			this->txtPathImport->Size = System::Drawing::Size(596, 20);
 			this->txtPathImport->TabIndex = 5;
-			this->txtPathImport->Text = L"E:\\Users\\FriendlyFire\\Desktop\\Nouveau Document texte.txt";
 			// 
 			// btnBrowseImport
 			// 
@@ -1181,6 +1182,7 @@ private: System::Windows::Forms::Button^  btnImport;
 			this->btnBrowseImport->TabIndex = 0;
 			this->btnBrowseImport->Text = L"Browse";
 			this->btnBrowseImport->UseVisualStyleBackColor = true;
+			this->btnBrowseImport->Click += gcnew System::EventHandler(this, &Main::btnBrowseImport_Click);
 			// 
 			// grpExport
 			// 
@@ -1313,6 +1315,10 @@ private: System::Windows::Forms::Button^  btnImport;
 			this->backgroundWorkerSearch->DoWork += gcnew System::ComponentModel::DoWorkEventHandler(this, &Main::backgroundWorkerSearch_DoWork);
 			this->backgroundWorkerSearch->RunWorkerCompleted += gcnew System::ComponentModel::RunWorkerCompletedEventHandler(this, &Main::backgroundWorkerSearch_RunWorkerCompleted);
 			this->backgroundWorkerSearch->ProgressChanged += gcnew System::ComponentModel::ProgressChangedEventHandler(this, &Main::backgroundWorkerSearch_ProgressChanged);
+			// 
+			// openImport
+			// 
+			this->openImport->RestoreDirectory = true;
 			// 
 			// Main
 			// 
@@ -1703,6 +1709,8 @@ private: System::Void btnImportLoad_Click(System::Object^  sender, System::Event
 			StreamReader^ sr = gcnew StreamReader(txtPathImport->Text);
 			lstImportResults->Items->Clear();
 			
+			int importCount = 0, badCount = 0;
+			
 			String^ l = sr->ReadLine();
 			for(int lineID = 0; l != nullptr;) {
 				int id = -1;
@@ -1726,20 +1734,32 @@ private: System::Void btnImportLoad_Click(System::Object^  sender, System::Event
 						importReadLine(sr, l, lineID);
 						
 						lstImportResults->Items->Add(gcnew ListViewItem(gcnew array<String^> {"" + id, e == DLLEntry::Infocard ? "Infocard" : "Name", e == DLLEntry::Infocard ? SimpleInfocards::StripTags(entry->ToString()) : entry->ToString()}));
-					} else
+						importCount++;
+					} else {
 						lstImportResults->Items->Add(gcnew ListViewItem(gcnew array<String^> {"" + id, "Unknown", "ERROR: Unexpected entry at line " + lineID + ". Expected INFOCARD or NAME."}));
+						badCount++;
+					}
 				} else {
 					lstImportResults->Items->Add(gcnew ListViewItem(gcnew array<String^> {"" + id, "Unknown", "ERROR: Unexpected entry at line " + lineID + ". Expected integer."}));
 					importReadLine(sr, l, lineID);
+					badCount++;
 				}
 			}
 			
 			sr->Close();
+			if(badCount == 0)
+				txtImportMessage->Text = "Successfully loaded " + importCount + " entries. Press import to integrate in the current DLL set.";
+			else
+				txtImportMessage->Text = "Loaded " + importCount + " entries with " + badCount + " errors. Press import to integrate in the current DLL set.";
 		 }
 		 
 		 void importReadLine(StreamReader^ sr, String^ &l, int &ID) {
 			l = sr->ReadLine();
 			ID++;
+		 }
+private: System::Void btnBrowseImport_Click(System::Object^  sender, System::EventArgs^  e) {
+			if(openImport->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+				txtPathImport->Text = openImport->FileName;
 		 }
 };
 }
