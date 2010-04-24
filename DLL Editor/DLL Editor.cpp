@@ -228,11 +228,17 @@ void Main::showNewEntry(int id) {
 	lblIDSInfo->Text = "DLL " + dlls->getDllId(id) + " of " + dlls->getDLLCount() + ".";
 	
 	int localDLL = dlls->localize(id);
+	bool foundId = false;
 	for each(ListViewItem^ lvi in lstDLLExplorer->Items) {
 		if(lvi->SubItems[0]->Text == "" + id) {
+			foundId = true;
 			lvi->Selected = true;
 			break;
 		}
+	}
+	if(!foundId) {
+		lstScroll->Value = id;
+		lstDLLExplorer->Items[0]->Selected = true;
 	}
 
 	currentEntry = id;

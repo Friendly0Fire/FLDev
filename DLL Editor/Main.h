@@ -13,6 +13,8 @@ namespace DLLEditor {
 	using namespace Interfaces;
 	using namespace Utilities;
 	using namespace System::Text::RegularExpressions;
+	using namespace System::IO;
+	using namespace System::Text;
 
 	/// <summary>
 	/// Summary for Main
@@ -153,6 +155,40 @@ private: System::Windows::Forms::ColumnHeader^  colSearchContent;
 private: System::Windows::Forms::Label^  lblSearchInput;
 private: System::ComponentModel::BackgroundWorker^  backgroundWorkerSearch;
 private: System::Windows::Forms::TextBox^  txtRegexTest;
+private: System::Windows::Forms::TabPage^  tabImportExport;
+private: System::Windows::Forms::SplitContainer^  splitContainer1;
+private: System::Windows::Forms::GroupBox^  grpImport;
+private: System::Windows::Forms::TextBox^  txtPathImport;
+
+
+
+
+
+
+private: System::Windows::Forms::Button^  btnBrowseImport;
+private: System::Windows::Forms::GroupBox^  grpExport;
+private: System::Windows::Forms::Button^  btnBrowseExport;
+private: System::Windows::Forms::TextBox^  txtPathExport;
+
+
+
+private: System::Windows::Forms::Button^  btnExport;
+
+private: System::Windows::Forms::RadioButton^  radioExportChanges;
+
+private: System::Windows::Forms::RadioButton^  radioExportAll;
+private: System::Windows::Forms::Button^  btnImportLoad;
+
+private: System::Windows::Forms::ListView^  lstImportResults;
+private: System::Windows::Forms::ColumnHeader^  colImportID;
+private: System::Windows::Forms::ColumnHeader^  colImportType;
+private: System::Windows::Forms::ColumnHeader^  colImportResult;
+private: System::Windows::Forms::TextBox^  txtImportMessage;
+private: System::Windows::Forms::TextBox^  txtExportSpecific;
+private: System::Windows::Forms::RadioButton^  radioExportSpecific;
+private: System::Windows::Forms::Button^  btnImport;
+
+
 
 
 
@@ -243,6 +279,26 @@ private: System::Windows::Forms::TextBox^  txtRegexTest;
 			this->btnSearch = (gcnew System::Windows::Forms::Button());
 			this->txtRegexTest = (gcnew System::Windows::Forms::TextBox());
 			this->lblSearchInput = (gcnew System::Windows::Forms::Label());
+			this->tabImportExport = (gcnew System::Windows::Forms::TabPage());
+			this->splitContainer1 = (gcnew System::Windows::Forms::SplitContainer());
+			this->grpImport = (gcnew System::Windows::Forms::GroupBox());
+			this->btnImport = (gcnew System::Windows::Forms::Button());
+			this->txtImportMessage = (gcnew System::Windows::Forms::TextBox());
+			this->lstImportResults = (gcnew System::Windows::Forms::ListView());
+			this->colImportID = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colImportType = (gcnew System::Windows::Forms::ColumnHeader());
+			this->colImportResult = (gcnew System::Windows::Forms::ColumnHeader());
+			this->btnImportLoad = (gcnew System::Windows::Forms::Button());
+			this->txtPathImport = (gcnew System::Windows::Forms::TextBox());
+			this->btnBrowseImport = (gcnew System::Windows::Forms::Button());
+			this->grpExport = (gcnew System::Windows::Forms::GroupBox());
+			this->txtExportSpecific = (gcnew System::Windows::Forms::TextBox());
+			this->radioExportSpecific = (gcnew System::Windows::Forms::RadioButton());
+			this->radioExportChanges = (gcnew System::Windows::Forms::RadioButton());
+			this->radioExportAll = (gcnew System::Windows::Forms::RadioButton());
+			this->btnExport = (gcnew System::Windows::Forms::Button());
+			this->btnBrowseExport = (gcnew System::Windows::Forms::Button());
+			this->txtPathExport = (gcnew System::Windows::Forms::TextBox());
 			this->helpProvider = (gcnew System::Windows::Forms::HelpProvider());
 			this->openFLINI = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->openDLL = (gcnew System::Windows::Forms::OpenFileDialog());
@@ -267,6 +323,12 @@ private: System::Windows::Forms::TextBox^  txtRegexTest;
 			this->splitSearch->Panel2->SuspendLayout();
 			this->splitSearch->SuspendLayout();
 			this->flowLayoutPanel1->SuspendLayout();
+			this->tabImportExport->SuspendLayout();
+			this->splitContainer1->Panel1->SuspendLayout();
+			this->splitContainer1->Panel2->SuspendLayout();
+			this->splitContainer1->SuspendLayout();
+			this->grpImport->SuspendLayout();
+			this->grpExport->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// mainTab
@@ -274,6 +336,7 @@ private: System::Windows::Forms::TextBox^  txtRegexTest;
 			this->mainTab->Controls->Add(this->tabSettings);
 			this->mainTab->Controls->Add(this->editTab);
 			this->mainTab->Controls->Add(this->tabSearch);
+			this->mainTab->Controls->Add(this->tabImportExport);
 			this->mainTab->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->mainTab->Location = System::Drawing::Point(0, 0);
 			this->mainTab->Name = L"mainTab";
@@ -859,6 +922,7 @@ private: System::Windows::Forms::TextBox^  txtRegexTest;
 			this->lstSearch->TabIndex = 6;
 			this->lstSearch->UseCompatibleStateImageBehavior = false;
 			this->lstSearch->View = System::Windows::Forms::View::Details;
+			this->lstSearch->ItemActivate += gcnew System::EventHandler(this, &Main::lstSearch_ItemActivate);
 			// 
 			// colSearchID
 			// 
@@ -988,6 +1052,234 @@ private: System::Windows::Forms::TextBox^  txtRegexTest;
 			this->lblSearchInput->TabIndex = 5;
 			this->lblSearchInput->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
 			// 
+			// tabImportExport
+			// 
+			this->tabImportExport->BackColor = System::Drawing::SystemColors::Control;
+			this->tabImportExport->Controls->Add(this->splitContainer1);
+			this->tabImportExport->Location = System::Drawing::Point(4, 22);
+			this->tabImportExport->Name = L"tabImportExport";
+			this->tabImportExport->Padding = System::Windows::Forms::Padding(3);
+			this->tabImportExport->Size = System::Drawing::Size(776, 536);
+			this->tabImportExport->TabIndex = 3;
+			this->tabImportExport->Text = L"Import/Export";
+			// 
+			// splitContainer1
+			// 
+			this->splitContainer1->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->splitContainer1->FixedPanel = System::Windows::Forms::FixedPanel::Panel2;
+			this->splitContainer1->Location = System::Drawing::Point(3, 3);
+			this->splitContainer1->Name = L"splitContainer1";
+			this->splitContainer1->Orientation = System::Windows::Forms::Orientation::Horizontal;
+			// 
+			// splitContainer1.Panel1
+			// 
+			this->splitContainer1->Panel1->Controls->Add(this->grpImport);
+			// 
+			// splitContainer1.Panel2
+			// 
+			this->splitContainer1->Panel2->Controls->Add(this->grpExport);
+			this->splitContainer1->Size = System::Drawing::Size(770, 530);
+			this->splitContainer1->SplitterDistance = 449;
+			this->splitContainer1->TabIndex = 3;
+			// 
+			// grpImport
+			// 
+			this->grpImport->Controls->Add(this->btnImport);
+			this->grpImport->Controls->Add(this->txtImportMessage);
+			this->grpImport->Controls->Add(this->lstImportResults);
+			this->grpImport->Controls->Add(this->btnImportLoad);
+			this->grpImport->Controls->Add(this->txtPathImport);
+			this->grpImport->Controls->Add(this->btnBrowseImport);
+			this->grpImport->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->grpImport->Location = System::Drawing::Point(0, 0);
+			this->grpImport->Name = L"grpImport";
+			this->grpImport->Size = System::Drawing::Size(770, 449);
+			this->grpImport->TabIndex = 2;
+			this->grpImport->TabStop = false;
+			this->grpImport->Text = L"Import";
+			// 
+			// btnImport
+			// 
+			this->btnImport->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+			this->btnImport->Location = System::Drawing::Point(674, 424);
+			this->btnImport->Name = L"btnImport";
+			this->btnImport->Size = System::Drawing::Size(90, 23);
+			this->btnImport->TabIndex = 9;
+			this->btnImport->Text = L"Import";
+			this->btnImport->UseVisualStyleBackColor = true;
+			// 
+			// txtImportMessage
+			// 
+			this->txtImportMessage->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->txtImportMessage->Location = System::Drawing::Point(6, 426);
+			this->txtImportMessage->Name = L"txtImportMessage";
+			this->txtImportMessage->ReadOnly = true;
+			this->txtImportMessage->Size = System::Drawing::Size(662, 20);
+			this->txtImportMessage->TabIndex = 8;
+			// 
+			// lstImportResults
+			// 
+			this->lstImportResults->Activation = System::Windows::Forms::ItemActivation::TwoClick;
+			this->lstImportResults->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->lstImportResults->BorderStyle = System::Windows::Forms::BorderStyle::FixedSingle;
+			this->lstImportResults->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(3) {this->colImportID, 
+				this->colImportType, this->colImportResult});
+			this->lstImportResults->FullRowSelect = true;
+			this->lstImportResults->GridLines = true;
+			this->lstImportResults->Location = System::Drawing::Point(6, 46);
+			this->lstImportResults->MultiSelect = false;
+			this->lstImportResults->Name = L"lstImportResults";
+			this->lstImportResults->Size = System::Drawing::Size(758, 374);
+			this->lstImportResults->TabIndex = 7;
+			this->lstImportResults->UseCompatibleStateImageBehavior = false;
+			this->lstImportResults->View = System::Windows::Forms::View::Details;
+			// 
+			// colImportID
+			// 
+			this->colImportID->Text = L"ID";
+			// 
+			// colImportType
+			// 
+			this->colImportType->Text = L"Type";
+			this->colImportType->Width = 68;
+			// 
+			// colImportResult
+			// 
+			this->colImportResult->Text = L"Result";
+			this->colImportResult->Width = 620;
+			// 
+			// btnImportLoad
+			// 
+			this->btnImportLoad->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->btnImportLoad->Location = System::Drawing::Point(689, 17);
+			this->btnImportLoad->Name = L"btnImportLoad";
+			this->btnImportLoad->Size = System::Drawing::Size(75, 23);
+			this->btnImportLoad->TabIndex = 6;
+			this->btnImportLoad->Text = L"Load";
+			this->btnImportLoad->UseVisualStyleBackColor = true;
+			this->btnImportLoad->Click += gcnew System::EventHandler(this, &Main::btnImportLoad_Click);
+			// 
+			// txtPathImport
+			// 
+			this->txtPathImport->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->txtPathImport->Location = System::Drawing::Point(6, 19);
+			this->txtPathImport->Name = L"txtPathImport";
+			this->txtPathImport->Size = System::Drawing::Size(596, 20);
+			this->txtPathImport->TabIndex = 5;
+			this->txtPathImport->Text = L"E:\\Users\\FriendlyFire\\Desktop\\Nouveau Document texte.txt";
+			// 
+			// btnBrowseImport
+			// 
+			this->btnBrowseImport->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
+			this->btnBrowseImport->Location = System::Drawing::Point(608, 17);
+			this->btnBrowseImport->Name = L"btnBrowseImport";
+			this->btnBrowseImport->Size = System::Drawing::Size(75, 23);
+			this->btnBrowseImport->TabIndex = 0;
+			this->btnBrowseImport->Text = L"Browse";
+			this->btnBrowseImport->UseVisualStyleBackColor = true;
+			// 
+			// grpExport
+			// 
+			this->grpExport->Controls->Add(this->txtExportSpecific);
+			this->grpExport->Controls->Add(this->radioExportSpecific);
+			this->grpExport->Controls->Add(this->radioExportChanges);
+			this->grpExport->Controls->Add(this->radioExportAll);
+			this->grpExport->Controls->Add(this->btnExport);
+			this->grpExport->Controls->Add(this->btnBrowseExport);
+			this->grpExport->Controls->Add(this->txtPathExport);
+			this->grpExport->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->grpExport->Location = System::Drawing::Point(0, 0);
+			this->grpExport->Name = L"grpExport";
+			this->grpExport->Size = System::Drawing::Size(770, 77);
+			this->grpExport->TabIndex = 3;
+			this->grpExport->TabStop = false;
+			this->grpExport->Text = L"Export";
+			// 
+			// txtExportSpecific
+			// 
+			this->txtExportSpecific->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->txtExportSpecific->Location = System::Drawing::Point(376, 48);
+			this->txtExportSpecific->Name = L"txtExportSpecific";
+			this->txtExportSpecific->Size = System::Drawing::Size(388, 20);
+			this->txtExportSpecific->TabIndex = 9;
+			// 
+			// radioExportSpecific
+			// 
+			this->radioExportSpecific->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left));
+			this->radioExportSpecific->AutoSize = true;
+			this->radioExportSpecific->Location = System::Drawing::Point(246, 49);
+			this->radioExportSpecific->Name = L"radioExportSpecific";
+			this->radioExportSpecific->Size = System::Drawing::Size(124, 17);
+			this->radioExportSpecific->TabIndex = 8;
+			this->radioExportSpecific->TabStop = true;
+			this->radioExportSpecific->Text = L"Export Following IDs:";
+			this->radioExportSpecific->UseVisualStyleBackColor = true;
+			// 
+			// radioExportChanges
+			// 
+			this->radioExportChanges->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left));
+			this->radioExportChanges->AutoSize = true;
+			this->radioExportChanges->Location = System::Drawing::Point(116, 49);
+			this->radioExportChanges->Name = L"radioExportChanges";
+			this->radioExportChanges->Size = System::Drawing::Size(124, 17);
+			this->radioExportChanges->TabIndex = 7;
+			this->radioExportChanges->TabStop = true;
+			this->radioExportChanges->Text = L"Export Changes Only";
+			this->radioExportChanges->UseVisualStyleBackColor = true;
+			// 
+			// radioExportAll
+			// 
+			this->radioExportAll->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left));
+			this->radioExportAll->AutoSize = true;
+			this->radioExportAll->Location = System::Drawing::Point(6, 49);
+			this->radioExportAll->Name = L"radioExportAll";
+			this->radioExportAll->Size = System::Drawing::Size(104, 17);
+			this->radioExportAll->TabIndex = 6;
+			this->radioExportAll->TabStop = true;
+			this->radioExportAll->Text = L"Export All Entries";
+			this->radioExportAll->UseVisualStyleBackColor = true;
+			// 
+			// btnExport
+			// 
+			this->btnExport->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->btnExport->Location = System::Drawing::Point(689, 19);
+			this->btnExport->Name = L"btnExport";
+			this->btnExport->Size = System::Drawing::Size(75, 23);
+			this->btnExport->TabIndex = 5;
+			this->btnExport->Text = L"Export";
+			this->btnExport->UseVisualStyleBackColor = true;
+			// 
+			// btnBrowseExport
+			// 
+			this->btnBrowseExport->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->btnBrowseExport->Location = System::Drawing::Point(608, 19);
+			this->btnBrowseExport->Name = L"btnBrowseExport";
+			this->btnBrowseExport->Size = System::Drawing::Size(75, 23);
+			this->btnBrowseExport->TabIndex = 4;
+			this->btnBrowseExport->Text = L"Browse";
+			this->btnBrowseExport->UseVisualStyleBackColor = true;
+			// 
+			// txtPathExport
+			// 
+			this->txtPathExport->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->txtPathExport->Location = System::Drawing::Point(6, 19);
+			this->txtPathExport->Name = L"txtPathExport";
+			this->txtPathExport->Size = System::Drawing::Size(596, 20);
+			this->txtPathExport->TabIndex = 1;
+			// 
 			// openFLINI
 			// 
 			this->openFLINI->DefaultExt = L"ini";
@@ -1059,6 +1351,14 @@ private: System::Windows::Forms::TextBox^  txtRegexTest;
 			this->splitSearch->ResumeLayout(false);
 			this->flowLayoutPanel1->ResumeLayout(false);
 			this->flowLayoutPanel1->PerformLayout();
+			this->tabImportExport->ResumeLayout(false);
+			this->splitContainer1->Panel1->ResumeLayout(false);
+			this->splitContainer1->Panel2->ResumeLayout(false);
+			this->splitContainer1->ResumeLayout(false);
+			this->grpImport->ResumeLayout(false);
+			this->grpImport->PerformLayout();
+			this->grpExport->ResumeLayout(false);
+			this->grpExport->PerformLayout();
 			this->ResumeLayout(false);
 
 		}
@@ -1375,6 +1675,71 @@ private: System::Void txtSearch_KeyPress(System::Object^  sender, System::Window
 			if(e->KeyChar == (wchar_t) 0xa) {
 				e->Handled = true;
 			}
+		 }
+private: System::Void lstSearch_ItemActivate(System::Object^  sender, System::EventArgs^  e) {
+			if(lstSearch->SelectedItems->Count == 1) {
+				int index = -1;
+				if(Int32::TryParse(lstSearch->SelectedItems[0]->SubItems[0]->Text, index)) {
+					mainTab->SelectedTab = editTab;
+					String^ dll = lstSearch->SelectedItems[0]->SubItems[1]->Text;
+					int a = 0;
+					for each(Object^ o in comboDLLExplorer->Items) {
+						if(((String^) o)->Equals(dll)) {
+							comboDLLExplorer->SelectedIndex = a;
+							//System::Threading::Thread::Sleep(100);
+							break;
+						}
+						a++;
+					}
+					showNewEntry(index);
+				}
+			}
+		 }
+private: System::Void btnImportLoad_Click(System::Object^  sender, System::EventArgs^  e) {
+			if(File::Exists(txtPathImport->Text)) importLoad(txtPathImport->Text);
+		 }
+		 
+		 void importLoad(String^ path) {
+			StreamReader^ sr = gcnew StreamReader(txtPathImport->Text);
+			lstImportResults->Items->Clear();
+			
+			String^ l = sr->ReadLine();
+			for(int lineID = 0; l != nullptr;) {
+				int id = -1;
+				String^ sID = l;
+				
+				if(Int32::TryParse(sID, id)) {
+					importReadLine(sr, l, lineID);
+					if(l == "INFOCARD" || l == "NAME") {
+						DLLEntry e = l == "INFOCARD" ? DLLEntry::Infocard : DLLEntry::Name;
+						
+						StringBuilder^ entry = gcnew StringBuilder();
+						importReadLine(sr, l, lineID);
+						
+						if(l == "///BEGIN///") {
+							importReadLine(sr, l, lineID);
+							for(; l != "///END///" && l != nullptr; importReadLine(sr, l, lineID))
+								entry->AppendLine(l);
+						} else
+							entry->Append(l->Replace("\\n", "\n")->Replace("\\r", "\r")->Replace("\\;", ";"));
+						
+						importReadLine(sr, l, lineID);
+						
+						lstImportResults->Items->Add(gcnew ListViewItem(gcnew array<String^> {"" + id, e == DLLEntry::Infocard ? "Infocard" : "Name", e == DLLEntry::Infocard ? SimpleInfocards::StripTags(entry->ToString()) : entry->ToString()}));
+					} else
+						lstImportResults->Items->Add(gcnew ListViewItem(gcnew array<String^> {"" + id, "Unknown", "ERROR: Unexpected entry at line " + lineID + ". Expected INFOCARD or NAME."}));
+				} else {
+					lstImportResults->Items->Add(gcnew ListViewItem(gcnew array<String^> {"" + id, "Unknown", "ERROR: Unexpected entry at line " + lineID + ". Expected integer."}));
+					importReadLine(sr, l, lineID);
+				}
+			}
+			
+			sr->Close();
+		 }
+		 
+		 void importReadLine(StreamReader^ sr, String^ &l, int &ID) {
+			l = sr->ReadLine();
+			ID++;
 		 }
 };
 }
