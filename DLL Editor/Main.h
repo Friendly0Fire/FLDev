@@ -1705,33 +1705,38 @@ private: System::Void btnImportLoad_Click(System::Object^  sender, System::Event
 			if(File::Exists(txtPathImport->Text)) importLoad(txtPathImport->Text);
 		 }
 		 
+		 // Add color coding, reordering by column
 		 void importLoad(String^ path) {
 			StreamReader^ sr = gcnew StreamReader(txtPathImport->Text);
 			lstImportResults->Items->Clear();
 			
 			int importCount = 0, badCount = 0;
 			
-			String^ l = sr->ReadLine();
-			for(int lineID = 0; l != nullptr;) {
+			Regex^ stripComments = gcnew Regex("(?<!\\\\);(.*)$", static_cast<RegexOptions>(RegexOptions::IgnoreCase | RegexOptions::Multiline | RegexOptions::CultureInvariant | RegexOptions::Compiled));
+			
+			String^ l = "";
+			int lineID = 0;
+			importReadLine(sr, l, lineID, stripComments);
+			while(l != nullptr) {
 				int id = -1;
 				String^ sID = l;
 				
 				if(Int32::TryParse(sID, id)) {
-					importReadLine(sr, l, lineID);
-					if(l == "INFOCARD" || l == "NAME") {
+					importReadLine(sr, l, lineID, stripComments);
+					if(l->Trim() == "INFOCARD" || l->Trim() == "NAME") {
 						DLLEntry e = l == "INFOCARD" ? DLLEntry::Infocard : DLLEntry::Name;
 						
 						StringBuilder^ entry = gcnew StringBuilder();
-						importReadLine(sr, l, lineID);
+						importReadLine(sr, l, lineID, stripComments, false);
 						
 						if(l == "///BEGIN///") {
-							importReadLine(sr, l, lineID);
-							for(; l != "///END///" && l != nullptr; importReadLine(sr, l, lineID))
+							importReadLine(sr, l, lineID, stripComments);
+							for(; l != "///END///" && l != nullptr; importReadLine(sr, l, lineID, stripComments))
 								entry->AppendLine(l);
 						} else
 							entry->Append(l->Replace("\\n", "\n")->Replace("\\r", "\r")->Replace("\\;", ";"));
 						
-						importReadLine(sr, l, lineID);
+						importReadLine(sr, l, lineID, stripComments);
 						
 						lstImportResults->Items->Add(gcnew ListViewItem(gcnew array<String^> {"" + id, e == DLLEntry::Infocard ? "Infocard" : "Name", e == DLLEntry::Infocard ? SimpleInfocards::StripTags(entry->ToString()) : entry->ToString()}));
 						importCount++;
@@ -1741,7 +1746,7 @@ private: System::Void btnImportLoad_Click(System::Object^  sender, System::Event
 					}
 				} else {
 					lstImportResults->Items->Add(gcnew ListViewItem(gcnew array<String^> {"" + id, "Unknown", "ERROR: Unexpected entry at line " + lineID + ". Expected integer."}));
-					importReadLine(sr, l, lineID);
+					importReadLine(sr, l, lineID, stripComments);
 					badCount++;
 				}
 			}
@@ -1750,12 +1755,21 @@ private: System::Void btnImportLoad_Click(System::Object^  sender, System::Event
 			if(badCount == 0)
 				txtImportMessage->Text = "Successfully loaded " + importCount + " entries. Press import to integrate in the current DLL set.";
 			else
-				txtImportMessage->Text = "Loaded " + importCount + " entries with " + badCount + " errors. Press import to integrate in the current DLL set.";
+				txtImportMessage->Text = "Loaded " + importCount + " entries with " + badCount + " error" + (badCount == 1 ? "" : "s") + ". Press import to integrate in the current DLL set.";
 		 }
 		 
-		 void importReadLine(StreamReader^ sr, String^ &l, int &ID) {
-			l = sr->ReadLine();
-			ID++;
+		 void importReadLine(StreamReader^ sr, String^ &l, int &ID, Regex^ stripComments) {
+			importReadLine(sr, l, ID, stripComments, true);
+		 }
+		 
+		 void importReadLine(StreamReader^ sr, String^ &l, int &ID, Regex^ stripComments, bool ignoreBlankLines) {
+			do {
+				l = sr->ReadLine();
+				if(l != nullptr) {
+					l = stripComments->Replace(l, "");
+					ID++;
+				}
+			} while((l == "" && ignoreBlankLines) && l != nullptr);
 		 }
 private: System::Void btnBrowseImport_Click(System::Object^  sender, System::EventArgs^  e) {
 			if(openImport->ShowDialog() == System::Windows::Forms::DialogResult::OK)
