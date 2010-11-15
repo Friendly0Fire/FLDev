@@ -189,8 +189,19 @@ namespace Interfaces
 		static String^ XMLToSimple(String^ content);
 		static String^ SimpleToXML(String^ content);
 		static String^ StripTags(String^ content);
+		
 	private:
 		static String^ dec2Bin(int i);
+		static unsigned int reverseByteOrder(unsigned int i);
+		
+		static Regex^ justMatch = gcnew Regex("loc=\"(?<value>[^\"]+)\"", RegexOptions::Compiled | RegexOptions::IgnoreCase);
+		static Regex^ traMatch = gcnew Regex("((?<data>data)|(?<mask>mask)|(?<def>def))=\"(?<value>[^\"]+)\"", RegexOptions::Compiled | RegexOptions::IgnoreCase);
+		// Add whitespace shifting refex
+		
+		const static short JUST = 0, TRA = 1;
+		const static short Left = -1, Center = 0, Right = 1;
+		
+		static array<String^>^ Alignments = gcnew array<String^> {"center", "right"};
 	};
 
 	public ref class DLLManager : ProcessingClass, Collections::IEnumerable {

@@ -1,4 +1,5 @@
 #pragma once
+#include <Windows.h>
 
 
 namespace DLLEditor {
@@ -188,6 +189,8 @@ private: System::Windows::Forms::TextBox^  txtExportSpecific;
 private: System::Windows::Forms::RadioButton^  radioExportSpecific;
 private: System::Windows::Forms::Button^  btnImport;
 private: System::Windows::Forms::OpenFileDialog^  openImport;
+private: System::Windows::Forms::SaveFileDialog^  saveExport;
+
 
 
 
@@ -308,6 +311,7 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->undoTimer = (gcnew System::Windows::Forms::Timer(this->components));
 			this->backgroundWorkerSearch = (gcnew System::ComponentModel::BackgroundWorker());
 			this->openImport = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->saveExport = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->mainTab->SuspendLayout();
 			this->tabSettings->SuspendLayout();
 			this->grpOut->SuspendLayout();
@@ -377,13 +381,13 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			// 
 			// grpOut
 			// 
-			this->grpOut->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+			this->grpOut->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->grpOut->Controls->Add(this->label2);
 			this->grpOut->Controls->Add(this->btnOutOpen);
 			this->grpOut->Controls->Add(this->txtOutPath);
 			this->grpOut->Controls->Add(this->btnBrowseOut);
-			this->grpOut->Location = System::Drawing::Point(8, 291);
+			this->grpOut->Location = System::Drawing::Point(8, 386);
 			this->grpOut->Name = L"grpOut";
 			this->grpOut->Size = System::Drawing::Size(760, 98);
 			this->grpOut->TabIndex = 4;
@@ -430,7 +434,8 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			// 
 			// grpDLLs
 			// 
-			this->grpDLLs->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+			this->grpDLLs->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->grpDLLs->Controls->Add(this->txtSelectedDLLPath);
 			this->grpDLLs->Controls->Add(this->btnReloadDLL);
@@ -439,18 +444,18 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->grpDLLs->Controls->Add(this->lstDLLs);
 			this->grpDLLs->Location = System::Drawing::Point(8, 84);
 			this->grpDLLs->Name = L"grpDLLs";
-			this->grpDLLs->Size = System::Drawing::Size(760, 201);
+			this->grpDLLs->Size = System::Drawing::Size(760, 296);
 			this->grpDLLs->TabIndex = 4;
 			this->grpDLLs->TabStop = false;
 			this->grpDLLs->Text = L"DLLs Loaded";
 			// 
 			// txtSelectedDLLPath
 			// 
-			this->txtSelectedDLLPath->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+			this->txtSelectedDLLPath->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->helpProvider->SetHelpString(this->txtSelectedDLLPath, L"Browse to the path of your freelancer.ini file. This will allow FLDev to parse th" 
 				L"e required DLLs for editing and viewing.");
-			this->txtSelectedDLLPath->Location = System::Drawing::Point(6, 163);
+			this->txtSelectedDLLPath->Location = System::Drawing::Point(6, 270);
 			this->txtSelectedDLLPath->Name = L"txtSelectedDLLPath";
 			this->helpProvider->SetShowHelp(this->txtSelectedDLLPath, true);
 			this->txtSelectedDLLPath->Size = System::Drawing::Size(414, 20);
@@ -458,8 +463,8 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			// 
 			// btnReloadDLL
 			// 
-			this->btnReloadDLL->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->btnReloadDLL->Location = System::Drawing::Point(537, 161);
+			this->btnReloadDLL->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+			this->btnReloadDLL->Location = System::Drawing::Point(537, 268);
 			this->btnReloadDLL->Name = L"btnReloadDLL";
 			this->btnReloadDLL->Size = System::Drawing::Size(105, 23);
 			this->btnReloadDLL->TabIndex = 5;
@@ -469,8 +474,8 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			// 
 			// btnResetDLLs
 			// 
-			this->btnResetDLLs->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->btnResetDLLs->Location = System::Drawing::Point(667, 161);
+			this->btnResetDLLs->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+			this->btnResetDLLs->Location = System::Drawing::Point(667, 268);
 			this->btnResetDLLs->Name = L"btnResetDLLs";
 			this->btnResetDLLs->Size = System::Drawing::Size(87, 23);
 			this->btnResetDLLs->TabIndex = 4;
@@ -479,8 +484,8 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			// 
 			// btnBrowseDLL
 			// 
-			this->btnBrowseDLL->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->btnBrowseDLL->Location = System::Drawing::Point(426, 161);
+			this->btnBrowseDLL->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
+			this->btnBrowseDLL->Location = System::Drawing::Point(426, 268);
 			this->btnBrowseDLL->Name = L"btnBrowseDLL";
 			this->btnBrowseDLL->Size = System::Drawing::Size(105, 23);
 			this->btnBrowseDLL->TabIndex = 3;
@@ -490,7 +495,8 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			// 
 			// lstDLLs
 			// 
-			this->lstDLLs->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
+			this->lstDLLs->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
+				| System::Windows::Forms::AnchorStyles::Left) 
 				| System::Windows::Forms::AnchorStyles::Right));
 			this->lstDLLs->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(3) {this->colDLL, this->colDLLAbs, 
 				this->colStatus});
@@ -501,7 +507,7 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->lstDLLs->Location = System::Drawing::Point(6, 19);
 			this->lstDLLs->MultiSelect = false;
 			this->lstDLLs->Name = L"lstDLLs";
-			this->lstDLLs->Size = System::Drawing::Size(748, 136);
+			this->lstDLLs->Size = System::Drawing::Size(748, 243);
 			this->lstDLLs->TabIndex = 2;
 			this->lstDLLs->UseCompatibleStateImageBehavior = false;
 			this->lstDLLs->View = System::Windows::Forms::View::Details;
@@ -1109,6 +1115,7 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->btnImport->TabIndex = 9;
 			this->btnImport->Text = L"Import";
 			this->btnImport->UseVisualStyleBackColor = true;
+			this->btnImport->Click += gcnew System::EventHandler(this, &Main::btnImport_Click);
 			// 
 			// txtImportMessage
 			// 
@@ -1220,7 +1227,6 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->radioExportSpecific->Name = L"radioExportSpecific";
 			this->radioExportSpecific->Size = System::Drawing::Size(124, 17);
 			this->radioExportSpecific->TabIndex = 8;
-			this->radioExportSpecific->TabStop = true;
 			this->radioExportSpecific->Text = L"Export Following IDs:";
 			this->radioExportSpecific->UseVisualStyleBackColor = true;
 			// 
@@ -1233,7 +1239,6 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->radioExportChanges->Name = L"radioExportChanges";
 			this->radioExportChanges->Size = System::Drawing::Size(124, 17);
 			this->radioExportChanges->TabIndex = 7;
-			this->radioExportChanges->TabStop = true;
 			this->radioExportChanges->Text = L"Export Changes Only";
 			this->radioExportChanges->UseVisualStyleBackColor = true;
 			// 
@@ -1242,6 +1247,7 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->radioExportAll->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom) 
 				| System::Windows::Forms::AnchorStyles::Left));
 			this->radioExportAll->AutoSize = true;
+			this->radioExportAll->Checked = true;
 			this->radioExportAll->Location = System::Drawing::Point(6, 49);
 			this->radioExportAll->Name = L"radioExportAll";
 			this->radioExportAll->Size = System::Drawing::Size(104, 17);
@@ -1260,6 +1266,7 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->btnExport->TabIndex = 5;
 			this->btnExport->Text = L"Export";
 			this->btnExport->UseVisualStyleBackColor = true;
+			this->btnExport->Click += gcnew System::EventHandler(this, &Main::btnExport_Click);
 			// 
 			// btnBrowseExport
 			// 
@@ -1271,6 +1278,7 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			this->btnBrowseExport->TabIndex = 4;
 			this->btnBrowseExport->Text = L"Browse";
 			this->btnBrowseExport->UseVisualStyleBackColor = true;
+			this->btnBrowseExport->Click += gcnew System::EventHandler(this, &Main::btnBrowseExport_Click);
 			// 
 			// txtPathExport
 			// 
@@ -1319,6 +1327,10 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 			// openImport
 			// 
 			this->openImport->RestoreDirectory = true;
+			// 
+			// saveExport
+			// 
+			this->saveExport->RestoreDirectory = true;
 			// 
 			// Main
 			// 
@@ -1443,6 +1455,7 @@ private: System::Windows::Forms::OpenFileDialog^  openImport;
 	private: System::Void backgroundWorkerFLINI_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
 				 mainStatus->removeStatusText("Reading INI");
 				 updateDLLList();
+				 flashWindow();
 			 }
 	private: System::Void backgroundWorkerApply_RunWorkerCompleted(System::Object^  sender, System::ComponentModel::RunWorkerCompletedEventArgs^  e) {
 				 mainStatus->removeStatusText("Applying changes");
@@ -1771,9 +1784,165 @@ private: System::Void btnImportLoad_Click(System::Object^  sender, System::Event
 				}
 			} while((l == "" && ignoreBlankLines) && l != nullptr);
 		 }
+		 
 private: System::Void btnBrowseImport_Click(System::Object^  sender, System::EventArgs^  e) {
-			if(openImport->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+			if(openImport->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 				txtPathImport->Text = openImport->FileName;
+				importLoad(txtPathImport->Text);
+			}
+		 }
+		 
+		 void flashWindow() {
+			flashWindow(3, 0);
+		 }
+		 
+		 void flashWindow(int flashCount, int flashDelay) {
+			FLASHWINFO* f = new FLASHWINFO();
+			f->cbSize = 20;
+			f->hwnd = (HWND)(void*) this->Handle;
+			f->dwFlags = 0x00000003;
+			f->uCount = flashCount;
+			f->dwTimeout = flashDelay;
+			FlashWindowEx(f);
+		 }
+		 
+		 ref class ExportElement {
+			public:
+				ExportElement(int id, bool infocard, String^ content) {
+					i = id;
+					inf = infocard;
+					c = content;
+				}
+				
+				virtual String^ ToString() override {
+					String^ out = i + Environment::NewLine;
+					if(inf) out += "INFOCARD";
+					else out += "NAME";
+					out += Environment::NewLine;
+					if(c->Contains(Environment::NewLine) || c->Contains("\n") || c->Contains("\r"))
+						out += "///BEGIN///" + Environment::NewLine;
+					out += c;
+					if(c->Contains(Environment::NewLine) || c->Contains("\n") || c->Contains("\r"))
+						out += Environment::NewLine + "///END///";
+					return out;
+				}
+			private:
+				int i;
+				bool inf;
+				String^ c;
+		 };
+		 
+private: System::Void btnBrowseExport_Click(System::Object^  sender, System::EventArgs^  e) {
+			if(saveExport->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+				txtPathExport->Text = saveExport->FileName;
+		 }
+		 
+		 LinkedList<ExportElement^>^ exportAllMods(bool modsOnly) {
+			LinkedList<ExportElement^>^ e = gcnew LinkedList<ExportElement^>();
+			for(int a = 0; a < dlls->getDLLCount(); a++) {
+				for(int b = 0; b < 0x10000; b++) {
+					if(dlls->mIsModified(a*0x10000 + b, true) || dlls->mIsModified(a*0x10000 + b, false) || !modsOnly) {
+						switch(dlls->mGetEntryType(b, a)) {
+							 case DLLEntry::Both:
+								e->AddLast(gcnew ExportElement(a*0x10000 + b, false, dlls->mGetEntry(b, a, false)));
+							case DLLEntry::Infocard:
+								e->AddLast(gcnew ExportElement(a*0x10000 + b, true, dlls->mGetEntry(b, a, true)));
+								break;
+							 case DLLEntry::Name:
+								e->AddLast(gcnew ExportElement(a*0x10000 + b, false, dlls->mGetEntry(b, a, false)));
+								break;
+						}
+					}
+				}
+			}
+			
+			return e;
+		 }
+		 
+		 LinkedList<ExportElement^>^ exportSpecific(array<int>^ ids) {
+			LinkedList<ExportElement^>^ e = gcnew LinkedList<ExportElement^>();
+			for(int a = 0; a < ids->Length; a++) {
+				switch(dlls->mGetEntryType(a)) {
+					 case DLLEntry::Both:
+						e->AddLast(gcnew ExportElement(a, false, dlls->mGetEntry(a, false)));
+					case DLLEntry::Infocard:
+						e->AddLast(gcnew ExportElement(a, true, dlls->mGetEntry(a, true)));
+						break;
+					 case DLLEntry::Name:
+						e->AddLast(gcnew ExportElement(a, false, dlls->mGetEntry(a, false)));
+						break;
+				}
+			}
+			
+			return e;
+		 }
+		 
+		 
+private: System::Void btnExport_Click(System::Object^  sender, System::EventArgs^  e) {
+			bool valid = false;
+			LinkedList<ExportElement^>^ exp;
+			if(Directory::Exists(Path::GetDirectoryName(txtPathExport->Text))) {
+				valid = true;
+				short extype = radioExportAll->Checked + 2*radioExportChanges->Checked + 4*radioExportSpecific->Checked;
+				try {
+				switch(extype) {
+					case 1:
+						exp = exportAllMods(false);
+						
+						break;
+					case 2:
+						exp = exportAllMods(true);
+						break;
+					case 4:
+						array<String^>^ idsS = txtExportSpecific->Text->Split(gcnew array<wchar_t> { ';' });
+						array<int>^ ids = gcnew array<int>(idsS->Length);
+						for(int a = 0; a < ids->Length; a++) ids[a] = Int32::Parse(idsS[a]);
+						exp = exportSpecific(ids);
+				}
+				} catch(...) { valid = false; }
+			}
+			if(valid) {
+				StreamWriter^ sw = gcnew StreamWriter(txtPathExport->Text);
+				for each(ExportElement^ e in exp) {
+					sw->WriteLine("" + e);
+				}
+				sw->Close();
+			}
+		 }
+		 
+private: System::Void btnImport_Click(System::Object^  sender, System::EventArgs^  e) {
+			StreamReader^ sr = gcnew StreamReader(txtPathImport->Text);
+			
+			Regex^ stripComments = gcnew Regex("(?<!\\\\);(.*)$", static_cast<RegexOptions>(RegexOptions::IgnoreCase | RegexOptions::Multiline | RegexOptions::CultureInvariant | RegexOptions::Compiled));
+			
+			String^ l = "";
+			int lineID = 0;
+			importReadLine(sr, l, lineID, stripComments);
+			while(l != nullptr) {
+				int id = -1;
+				String^ sID = l;
+				
+				if(Int32::TryParse(sID, id)) {
+					importReadLine(sr, l, lineID, stripComments);
+					if(l->Trim() == "INFOCARD" || l->Trim() == "NAME") {
+						bool e = l == "INFOCARD";
+						
+						StringBuilder^ entry = gcnew StringBuilder();
+						importReadLine(sr, l, lineID, stripComments, false);
+						
+						if(l == "///BEGIN///") {
+							importReadLine(sr, l, lineID, stripComments);
+							for(; l != "///END///" && l != nullptr; importReadLine(sr, l, lineID, stripComments))
+								entry->AppendLine(l);
+						} else
+							entry->Append(l->Replace("\\n", "\n")->Replace("\\r", "\r")->Replace("\\;", ";"));
+						
+						importReadLine(sr, l, lineID, stripComments);
+						
+						dlls->mSetEntry(id, entry->ToString(), e);
+					}
+				}
+			}
 		 }
 };
 }

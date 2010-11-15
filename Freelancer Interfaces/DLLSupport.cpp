@@ -375,7 +375,7 @@ DLLEntry DLLManager::mGetEntryType( int id ) {
 	int b;
 	for(int a = 0; a < this->dlls->Length; a++) {
 		b = a * 0x10000;
-		if(id > b && id < ( b + 0x10000) )
+		if(id >= b && id < ( b + 0x10000) )
 			return mGetEntryType(id - b, a);
 	}
 	return DLLEntry::None;
@@ -402,7 +402,7 @@ bool DLLManager::mIsModified( int id, bool infocard ) {
 	int b;
 	for(int a = 0; a < this->dlls->Length; a++) {
 		b = a * 0x10000;
-		if(id > b && id < ( b + 0x10000) )
+		if(id >= b && id < ( b + 0x10000) )
 			return dlls[a]->ModifiedL[ id - b, infocard ];
 	}
 	return false;
@@ -451,7 +451,7 @@ void DLLManager::mSetEntry( int id, String^ text, bool infocard ) {
 	int b;
 	for(int a = 0; a < this->dlls->Length; a++) {
 		b = a * 0x10000;
-		if(id > b && id < ( b + 0x10000) )
+		if(id >= b && id < ( b + 0x10000) )
 			mSetEntry( (id - b), a, text, infocard);
 	}
 }
@@ -464,7 +464,7 @@ void DLLManager::mCancelSetEntry( int id, bool infocard ) {
 	int b;
 	for(int a = 0; a < this->dlls->Length; a++) {
 		b = a * 0x10000;
-		if(id > b && id < ( b + 0x10000) )
+		if(id >= b && id < ( b + 0x10000) )
 			dlls[a]->CancelSetEntry( (id - b), infocard, true );
 	}
 }
@@ -503,7 +503,139 @@ int DLLManager::getDllId(int id) {
 	return a;
 }
 
+// Use left-shift and right-shift to parse color and style info
 System::String^ SimpleInfocards::XMLToSimple(String^ content) {
+	content = content->Replace("\n", "");
+	content = content->Replace("\r", "");
+	content = content->Replace("<PARA/><POP/></RDL>", "");
+	content = content->Replace("<?xml version=\"1.0\" encoding=\"UTF-16\"?><RDL><PUSH/>", "");
+	content = content->Replace("<TEXT>", "");
+	content = content->Replace("</TEXT>", "");
+	content = content->Replace("<PARA/>", Environment::NewLine);
+	
+	StringBuilder^ output = gcnew StringBuilder();
+	
+	short currAlign = SimpleInfocards::Left;
+	unsigned int currStyle = 0;
+	
+	bool inTag = false, inTagName = false;
+	int tagType = -1;
+	StringBuilder^ sb = gcnew StringBuilder();
+	for(int a = 0; a < content->Length; a++) {
+		if(content[a] == '<') {
+			inTag = true;
+			inTagName = true;
+		} else if(content[a] == '>' && inTag) {
+			inTag = false;
+			String^ tag = sb->ToString();
+			sb = gcnew StringBuilder();
+			
+			MatchCollection^ mc;
+			if(tagType == SimpleInfocards::JUST) {
+				int newAlign = SimpleInfocards::Left;
+				mc = justMatch->Matches(tag);
+				if(mc->Count == 1) {
+					String^ align = mc[0]->Groups["value"]->Value;
+					if(align->Equals("center", StringComparison::InvariantCultureIgnoreCase))
+						newAlign = SimpleInfocards::Center;
+					else if(align->Equals("right", StringComparison::InvariantCultureIgnoreCase))
+						newAlign = SimpleInfocards::Right;
+				}
+				
+				if(newAlign != currAlign) {
+					if(currAlign != SimpleInfocards::Left) {
+						output->Append("[/" + Alignments[currAlign] + "]");
+					}
+					if(newAlign != SimpleInfocards::Left) {
+						output->Append("[" + Alignments[currAlign] + "]");
+					}
+				}
+			} else {
+				int newStyle = 0;
+				bool validStyle = false;
+				mc = traMatch->Matches(tag);
+				for each(Match^ m in mc) {
+					if(m->Groups["data"]->Value != "") {
+						if(m->Groups["value"]->Value->StartsWith("0x")) {
+							if(Int32::TryParse(m->Groups["value"]->Value->Substring(2), System::Globalization::NumberStyles::HexNumber, System::Globalization::CultureInfo::CurrentCulture, newStyle))
+								validStyle = true;
+						} else {
+							if(Int32::TryParse(m->Groups["value"]->Value, System::Globalization::NumberStyles::Integer, System::Globalization::CultureInfo::CurrentCulture, newStyle))
+								validStyle = true;
+						}
+						break;
+					}
+				}
+				
+				if(validStyle) {
+					if((newStyle & 1) != 0 && (currStyle & 1) == 0) {
+						output->Append("[b]");
+					} else if((newStyle & 1) == 0 && (currStyle & 1) != 0) {
+						output->Append("[/b]");
+					}
+					
+					if((newStyle & 2) != 0 && (currStyle & 2) == 0) {
+						output->Append("[i]");
+					} else if((newStyle & 2) == 0 && (currStyle & 2) != 0) {
+						output->Append("[/i]");
+					}
+					
+					if((newStyle & 4) != 0 && (currStyle & 4) == 0) {
+						output->Append("[u]");
+					} else if((newStyle & 4) == 0 && (currStyle & 4) != 0) {
+						output->Append("[/u]");
+					}
+					
+					unsigned int currColor = currStyle << 8, newColor = reverseByteOrder(newStyle >> 8);
+					
+					if(currColor != newColor) {
+						// Make color handling code here
+					}
+					
+					currStyle = newStyle;
+				}
+			}
+		} else if(inTag) {
+			if(inTagName && content[a] == ' ') {
+				inTagName = false;
+				String^ tag = sb->ToString();
+				if(tag->Equals("tra", StringComparison::InvariantCultureIgnoreCase)) tagType = SimpleInfocards::TRA;
+				else tagType = SimpleInfocards::JUST;
+				sb = gcnew StringBuilder();
+			} else
+				sb->Append(content[a]);
+		} else {
+			output->Append(content[a]);
+		}
+	}
+	
+	content = output->ToString();
+	
+	content = content->Replace("&#38;", "&");
+	content = content->Replace("&amp;", "&");
+	content = content->Replace("&#62;", ">");
+	content = content->Replace("&gt;", ">");
+	content = content->Replace("&#60;", "<");
+	content = content->Replace("&lt;", "<");
+	
+	return content;
+}
+
+unsigned int SimpleInfocards::reverseByteOrder(unsigned int i) {
+	unsigned char c1, c2, c3, c4;
+	c1 = i & 255;
+	c2 = (i >> 8) & 255;
+	c3 = (i >> 16) & 255;
+	c4 = (i >> 24) & 255;
+	
+	return ((int) c1 << 24) + ((int) c2 << 16) + ((int) c3 << 8) + c4;
+}
+
+System::String^ SimpleInfocards::SimpleToXML(String^ content) {
+	return content;
+}
+
+/*System::String^ SimpleInfocards::XMLToSimple(String^ content) {
 	//Make a new StringBuilder; it will hold the final text with BBCode
 	StringBuilder^ content_final = gcnew StringBuilder();
 	//Replace the basic stuff; either it doesn't code anything worthwhile or it always means the same thing
@@ -780,7 +912,9 @@ System::String^ SimpleInfocards::SimpleToXML(String^ content) {
 	String^ final_text = System::Text::RegularExpressions::Regex::Replace(content_final->ToString(), "<JUST (?<just>[^<>/]*)/>(?<paras>(<PARA/>)*)", "${paras}<JUST ${just}/>");
 	final_text = System::Text::RegularExpressions::Regex::Replace(final_text, "<TRA (?<tra>[^<>/]*)/>(?<paras>(<PARA/>)*)", "${paras}<TRA ${tra}/>");
 	return final_text;
-}
+}*/
+
+
 String^ SimpleInfocards::dec2Bin(int i) {
 	String^ b = (i < 0) ? "1" : "0";
 	for (int j = 0x40000000; j > 0; j >>= 1)
