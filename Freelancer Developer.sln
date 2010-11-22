@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Utilities", "Utilities\Utilities.vcproj", "{FE57BD45-1A71-440C-B4EC-4D0A95E8827B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Fuser", "Fuser\Fuser.vcproj", "{142203B6-045C-4E7B-A176-8BE2582B0530}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -39,6 +41,10 @@ Global
 		{FE57BD45-1A71-440C-B4EC-4D0A95E8827B}.Debug|Win32.Build.0 = Debug|Win32
 		{FE57BD45-1A71-440C-B4EC-4D0A95E8827B}.Release|Win32.ActiveCfg = Release|Win32
 		{FE57BD45-1A71-440C-B4EC-4D0A95E8827B}.Release|Win32.Build.0 = Release|Win32
+		{142203B6-045C-4E7B-A176-8BE2582B0530}.Debug|Win32.ActiveCfg = Debug|Win32
+		{142203B6-045C-4E7B-A176-8BE2582B0530}.Debug|Win32.Build.0 = Debug|Win32
+		{142203B6-045C-4E7B-A176-8BE2582B0530}.Release|Win32.ActiveCfg = Release|Win32
+		{142203B6-045C-4E7B-A176-8BE2582B0530}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
